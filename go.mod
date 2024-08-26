@@ -1,9 +1,6 @@
 module github.com/grokify/sogo
 
 go 1.22.0
-
-toolchain go1.22.2
-
 require (
 	github.com/apex/gateway v1.1.2
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2
@@ -18,7 +15,7 @@ require (
 	github.com/grokify/mogo v0.64.9
 	github.com/jessevdk/go-flags v1.6.1
 	github.com/leekchan/accounting v1.0.0
-	github.com/oleiade/reflections v1.0.1
+	github.com/oleiade/reflections v1.1.0
 	github.com/pkg/sftp v1.13.6
 	github.com/shopspring/decimal v1.4.0
 	github.com/tkuchiki/go-timezone v0.2.3
