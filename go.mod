@@ -20,7 +20,7 @@ require (
 	github.com/pkg/sftp v1.13.7
 	github.com/shopspring/decimal v1.4.0
 	github.com/tkuchiki/go-timezone v0.2.3
-	github.com/valyala/fasthttp v1.57.0
+	github.com/valyala/fasthttp v1.58.0
 	github.com/valyala/fastjson v1.6.4
 	github.com/valyala/quicktemplate v1.8.0
 	github.com/zhuyie/golzf v0.0.0-20161112031142-8387b0307ade
