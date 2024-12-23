@@ -13,7 +13,7 @@ require (
 	github.com/go-logfmt/logfmt v0.6.0
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/gorilla/mux v1.8.1
-	github.com/grokify/mogo v0.66.2
+	github.com/grokify/mogo v0.66.3
 	github.com/jessevdk/go-flags v1.6.1
 	github.com/leekchan/accounting v1.0.0
 	github.com/oleiade/reflections v1.1.0
@@ -30,7 +30,7 @@ require (
 require (
 	github.com/andybalholm/brotli v1.1.1 // indirect
 	github.com/aws/aws-lambda-go v1.47.0 // indirect
-	github.com/caarlos0/env/v11 v11.2.2 // indirect
+	github.com/caarlos0/env/v11 v11.3.1 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/cockroachdb/apd v1.1.0 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
@@ -45,8 +45,8 @@ require (
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
-	golang.org/x/exp v0.0.0-20241210194714-1829a127f884 // indirect
-	golang.org/x/net v0.32.0 // indirect
+	golang.org/x/exp v0.0.0-20241217172543-b2144cdd0a67 // indirect
+	golang.org/x/net v0.33.0 // indirect
 	golang.org/x/sys v0.28.0 // indirect
 	golang.org/x/text v0.21.0 // indirect
 )
