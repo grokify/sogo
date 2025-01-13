@@ -29,18 +29,34 @@ func (ms *MustacheSet) ReadTemplates() error {
 	return nil
 }
 
-func (ms *MustacheSet) RenderTemplate(key string, data map[string]string) (*bytes.Buffer, error) {
+func (ms *MustacheSet) RenderTemplate(key string, data map[string]string) ([]byte, error) {
 	tmpl, ok := ms.Templates[key]
 	if !ok {
-		return nil, fmt.Errorf("template key not present for key (%s)", key)
+		return []byte{}, fmt.Errorf("template key not present for key (%s)", key)
 	} else if tmpl == nil {
-		return nil, fmt.Errorf("template is nil for key (%s)", key)
+		return []byte{}, fmt.Errorf("template is nil for key (%s)", key)
 	} else {
 		var buf bytes.Buffer
 		if err := tmpl.FRender(&buf, data); err != nil {
-			return nil, err
+			return []byte{}, err
 		} else {
-			return &buf, nil
+			return buf.Bytes(), nil
+		}
+	}
+}
+
+func (ms *MustacheSet) RenderTemplateOrDefault(key string, data map[string]string, def []byte) ([]byte, error) {
+	tmpl, ok := ms.Templates[key]
+	if !ok {
+		return def, nil
+	} else if tmpl == nil {
+		return def, nil
+	} else {
+		var buf bytes.Buffer
+		if err := tmpl.FRender(&buf, data); err != nil {
+			return []byte{}, err
+		} else {
+			return buf.Bytes(), nil
 		}
 	}
 }
