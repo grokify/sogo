@@ -1,4 +1,4 @@
-# Sogo
+# SoGo
 
 [![Build Status][build-status-svg]][build-status-link]
 [![Go Report Card][goreport-svg]][goreport-link]
@@ -7,7 +7,7 @@
 
 ## Description
 
-Sogo is a collection of Go wrappers to make using various Go libaries easier. Much of the original code for this library was originally in the [`github.com/grokify/mogo`](https://github.com/grokify/mogo) package, however, the code was extracted in the interest of reducing the dependencies associated with that module. This module freely uses additional dependencies, with the goal of limiting dependencies to specific packages.
+SoGo is a collection of Go wrappers to make using various Go libaries easier. Much of the original code for this library was originally in the [`github.com/grokify/mogo`](https://github.com/grokify/mogo) package, however, the code was extracted in the interest of reducing the dependencies associated with that module. This module freely uses additional dependencies, with the goal of limiting dependencies to specific packages.
 
  [build-status-svg]: https://github.com/grokify/sogo/workflows/test/badge.svg
  [build-status-link]: https://github.com/grokify/sogo/actions/workflows/test.yaml
