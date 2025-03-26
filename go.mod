@@ -19,7 +19,7 @@ require (
 	github.com/jessevdk/go-flags v1.6.1
 	github.com/leekchan/accounting v1.0.0
 	github.com/oleiade/reflections v1.1.0
-	github.com/pkg/sftp v1.13.8
+	github.com/pkg/sftp v1.13.9
 	github.com/shopspring/decimal v1.4.0
 	github.com/tkuchiki/go-timezone v0.2.3
 	github.com/valyala/fasthttp v1.59.0
