@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log/slog"
 
 	"github.com/grokify/sogo/database/document"
 	"github.com/grokify/sogo/database/document/redis"
@@ -17,13 +18,25 @@ func main() {
 	key := "hello"
 
 	for i, val := range []string{"world", "monde", "世界", "ప్రపంచ"} {
-		client.SetString(key, val)
-		fmt.Printf("(%v) KEY [%v] SET [%v] GET [%v] EQ [%v]\n",
-			i+1,
-			key,
-			val,
-			client.GetOrEmptyString(key),
-			val == client.GetOrEmptyString(key))
+		err := client.SetString(key, val)
+		if err != nil {
+			slog.Error(err.Error())
+		} else {
+			slog.Info("successful write",
+				"key", i+1,
+				"set", val,
+				"get", client.GetOrEmptyString(key),
+				"is_equal", (val == client.GetOrEmptyString(key)),
+			)
+			/*
+				fmt.Printf("(%v) KEY [%v] SET [%v] GET [%v] EQ [%v]\n",
+					i+1,
+					key,
+					val,
+					client.GetOrEmptyString(key),
+					val == client.GetOrEmptyString(key))
+			*/
+		}
 	}
 
 	fmt.Println("DONE")

@@ -2,7 +2,8 @@ package main
 
 import (
 	"fmt"
-	"log"
+	"log/slog"
+	"os"
 
 	"github.com/emersion/go-imap"
 	"github.com/grokify/mogo/config"
@@ -12,18 +13,23 @@ import (
 func main() {
 	_, err := config.LoadDotEnv([]string{".env"}, 1)
 	if err != nil {
-		log.Fatal(err)
+		slog.Error(err.Error())
+		os.Exit(1)
 	}
 
 	cm, err := imaputil.NewClientMoreEnv(imaputil.DefaultEnvPrefix)
 	if err != nil {
-		log.Fatal(err)
+		slog.Error(err.Error())
+		os.Exit(2)
 	}
+
 	err = cm.ConnectAndLogin()
 	if err != nil {
-		log.Fatal(err)
+		slog.Error(err.Error())
+		os.Exit(3)
 	}
-	defer cm.Logout()
+
+	// defer cm.Logout() // lint: triggers: `Error return value of `cm.Logout` is not checked (errcheck)`
 
 	// List mailboxes
 	mailboxes := make(chan *imap.MailboxInfo, 10)
@@ -32,10 +38,17 @@ func main() {
 		done <- cm.Client.List("", "*", mailboxes)
 	}()
 
-	log.Println("Mailboxes:")
+	slog.Info("Mailboxes:")
 	for m := range mailboxes {
-		log.Println("* " + m.Name)
+		slog.Info("* " + m.Name)
+	}
+
+	err = cm.Logout()
+	if err != nil {
+		slog.Error(err.Error())
+		os.Exit(4)
 	}
 
 	fmt.Println("DONE")
+	os.Exit(0)
 }
