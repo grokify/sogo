@@ -12,7 +12,7 @@ SoGo is a collection of Go wrappers to make using various Go libaries easier. Mu
 
  [build-status-svg]: https://github.com/grokify/sogo/actions/workflows/ci.yaml/badge.svg?branch=master
  [build-status-url]: https://github.com/grokify/sogo/actions/workflows/ci.yaml
- [lint-status-svg]: https://github.com/grokify/sogo/workflows/lint/badge.svg
+ [lint-status-svg]: https://github.com/grokify/sogo/actions/workflows/lint.yaml/badge.svg?branch=master
  [lint-status-url]: https://github.com/grokify/sogo/actions/workflows/lint.yaml
  [goreport-svg]: https://goreportcard.com/badge/github.com/grokify/sogo
  [goreport-url]: https://goreportcard.com/report/github.com/grokify/sogo
