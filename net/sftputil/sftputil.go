@@ -60,13 +60,14 @@ func (c *SftpClient) GetKey(sKeyPath string) (key ssh.Signer, err error) {
 
 func (c *SftpClient) Connect() error {
 	auth := []ssh.AuthMethod{}
-	if c.authMethod == "key" {
+	switch c.authMethod {
+	case "key":
 		key, _ := c.GetKey(c.keyPath)
 
 		auth = []ssh.AuthMethod{
 			ssh.PublicKeys(key),
 		}
-	} else if c.authMethod == "password" {
+	case "password":
 		auth = []ssh.AuthMethod{
 			ssh.Password(c.password),
 		}
