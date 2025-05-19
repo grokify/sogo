@@ -41,12 +41,16 @@ func AddFlags(cmd *cobra.Command, opts any) error {
 			cmd.Flags().StringVarP(ptr, flagLong, flagShort, defaultStr, desc)
 		case reflect.Int:
 			def := 0
-			fmt.Sscanf(defaultStr, "%d", &def)
+			if _, err := fmt.Sscanf(defaultStr, "%d", &def); err != nil {
+				return err
+			}
 			ptr := fieldVal.Addr().Interface().(*int)
 			cmd.Flags().IntVarP(ptr, flagLong, flagShort, def, desc)
 		case reflect.Bool:
 			def := false
-			fmt.Sscanf(defaultStr, "%t", &def)
+			if _, err := fmt.Sscanf(defaultStr, "%t", &def); err != nil {
+				return err
+			}
 			ptr := fieldVal.Addr().Interface().(*bool)
 			cmd.Flags().BoolVarP(ptr, flagLong, flagShort, def, desc)
 		case reflect.Slice:
