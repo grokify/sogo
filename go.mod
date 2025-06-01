@@ -22,6 +22,7 @@ require (
 	github.com/pkg/sftp v1.13.9
 	github.com/shopspring/decimal v1.4.0
 	github.com/spf13/cobra v1.9.1
+	github.com/spf13/pflag v1.0.6
 	github.com/tkuchiki/go-timezone v0.2.3
 	github.com/valyala/fasthttp v1.62.0
 	github.com/valyala/fastjson v1.6.4
@@ -50,7 +51,6 @@ require (
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
-	github.com/spf13/pflag v1.0.6 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	golang.org/x/exp v0.0.0-20250531010427-b6e5de432a8b // indirect
 	golang.org/x/image v0.27.0 // indirect

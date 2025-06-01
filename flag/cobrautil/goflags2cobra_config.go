@@ -10,9 +10,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// AddFlags augments a `cobra.Command` with flags with by
+// GoflagsToCobraConfig augments a `cobra.Command` with flags with by
 // struct definitions used by `github.com/jessevdk/go-flags`.
-func AddFlags(cmd *cobra.Command, opts any) error {
+func GoflagsToCobraConfig(cmd *cobra.Command, opts any) error {
 	if cmd == nil {
 		return errors.New("cobra command cannot be nil")
 	} else if opts == nil {
