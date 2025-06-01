@@ -15,7 +15,7 @@ require (
 	github.com/go-logfmt/logfmt v0.6.0
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/gorilla/mux v1.8.1
-	github.com/grokify/mogo v0.70.0
+	github.com/grokify/mogo v0.70.1
 	github.com/jessevdk/go-flags v1.6.1
 	github.com/leekchan/accounting v1.0.0
 	github.com/oleiade/reflections v1.1.0
@@ -52,7 +52,7 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/spf13/pflag v1.0.6 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
-	golang.org/x/exp v0.0.0-20250506013437-ce4c2cf36ca6 // indirect
+	golang.org/x/exp v0.0.0-20250531010427-b6e5de432a8b // indirect
 	golang.org/x/image v0.27.0 // indirect
 	golang.org/x/net v0.40.0 // indirect
 	golang.org/x/sys v0.33.0 // indirect
