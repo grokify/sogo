@@ -46,7 +46,6 @@ func CobraToGoflagsRuntime(cmd *cobra.Command, opts any) error {
 						panic(err)
 					} else if val {
 						fieldVal.Set(reflect.ValueOf([]bool{true}))
-						// fieldVal.SetBool(val)
 					}
 				case reflect.Int:
 					if val, err := flagSet.GetInt(flag.Name); err != nil {
@@ -87,13 +86,11 @@ func CobraToGoflagsRuntime(cmd *cobra.Command, opts any) error {
 						} else {
 							fieldVal.Set(reflect.ValueOf(val))
 						}
-						/*
-							case reflect.Bool:
-								// Presence of the flag means "true"
-								if flag.Changed {
-									fieldVal.Set(reflect.ValueOf([]bool{true}))
-								}
-						*/
+					case reflect.Bool:
+						// Presence of the flag means "true"
+						if flag.Changed {
+							fieldVal.Set(reflect.ValueOf([]bool{true}))
+						}
 					}
 				}
 			}

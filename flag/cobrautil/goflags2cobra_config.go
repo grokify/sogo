@@ -66,7 +66,9 @@ func GoflagsToCobraConfig(cmd *cobra.Command, opts any) error {
 				cmd.Flags().BoolVar(ptr, flagLong, def, desc)
 			}
 		case reflect.Slice:
-			if field.Type.Elem().Kind() == reflect.String {
+			elemKind := field.Type.Elem().Kind()
+			switch elemKind {
+			case reflect.String:
 				defSlice := []string{}
 				if defaultStr != "" {
 					defSlice = stringsutil.SplitTrimSpace(defaultStr, ",", true)
@@ -76,6 +78,14 @@ func GoflagsToCobraConfig(cmd *cobra.Command, opts any) error {
 					cmd.Flags().StringSliceVarP(ptr, flagLong, flagShort, defSlice, desc)
 				} else {
 					cmd.Flags().StringSliceVar(ptr, flagLong, defSlice, desc)
+				}
+			case reflect.Bool:
+				def := false
+				var flagvar bool
+				if flagShort != "" {
+					cmd.Flags().BoolVarP(&flagvar, flagLong, flagShort, def, desc)
+				} else {
+					cmd.Flags().BoolVar(&flagvar, flagLong, def, desc)
 				}
 			}
 		}
