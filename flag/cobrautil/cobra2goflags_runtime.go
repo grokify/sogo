@@ -36,30 +36,64 @@ func CobraToGoflagsRuntime(cmd *cobra.Command, opts any) error {
 			if fieldVal.CanSet() {
 				switch fieldVal.Kind() {
 				case reflect.String:
-					val, _ := flagSet.GetString(flag.Name)
-					fieldVal.SetString(val)
+					if val, err := flagSet.GetString(flag.Name); err != nil {
+						panic(err)
+					} else {
+						fieldVal.SetString(val)
+					}
 				case reflect.Bool:
-					val, _ := flagSet.GetBool(flag.Name)
-					fieldVal.SetBool(val)
+					if val, err := flagSet.GetBool(flag.Name); err != nil {
+						panic(err)
+					} else if val {
+						fieldVal.Set(reflect.ValueOf([]bool{true}))
+						// fieldVal.SetBool(val)
+					}
 				case reflect.Int:
-					val, _ := flagSet.GetInt(flag.Name)
-					fieldVal.SetInt(int64(val))
+					if val, err := flagSet.GetInt(flag.Name); err != nil {
+						panic(err)
+					} else {
+						fieldVal.SetInt(int64(val))
+					}
 				case reflect.Int64:
-					val, _ := flagSet.GetInt64(flag.Name)
-					fieldVal.SetInt(val)
+					if val, err := flagSet.GetInt64(flag.Name); err != nil {
+						panic(err)
+					} else {
+						fieldVal.SetInt(val)
+					}
 				case reflect.Uint:
-					val, _ := flagSet.GetUint(flag.Name)
-					fieldVal.SetUint(uint64(val))
+					if val, err := flagSet.GetUint(flag.Name); err != nil {
+						panic(err)
+					} else {
+						fieldVal.SetUint(uint64(val))
+					}
 				case reflect.Uint64:
-					val, _ := flagSet.GetUint64(flag.Name)
-					fieldVal.SetUint(val)
+					if val, err := flagSet.GetUint64(flag.Name); err != nil {
+						panic(err)
+					} else {
+						fieldVal.SetUint(val)
+					}
 				case reflect.Float64:
-					val, _ := flagSet.GetFloat64(flag.Name)
-					fieldVal.SetFloat(val)
+					if val, err := flagSet.GetFloat64(flag.Name); err != nil {
+						panic(err)
+					} else {
+						fieldVal.SetFloat(val)
+					}
 				case reflect.Slice:
-					if fieldVal.Type().Elem().Kind() == reflect.String {
-						val, _ := flagSet.GetStringSlice(flag.Name)
-						fieldVal.Set(reflect.ValueOf(val))
+					elemKind := fieldVal.Type().Elem().Kind()
+					switch elemKind {
+					case reflect.String:
+						if val, err := flagSet.GetStringSlice(flag.Name); err != nil {
+							panic(err)
+						} else {
+							fieldVal.Set(reflect.ValueOf(val))
+						}
+						/*
+							case reflect.Bool:
+								// Presence of the flag means "true"
+								if flag.Changed {
+									fieldVal.Set(reflect.ValueOf([]bool{true}))
+								}
+						*/
 					}
 				}
 			}
