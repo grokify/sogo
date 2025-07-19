@@ -22,7 +22,7 @@ require (
 	github.com/pkg/sftp v1.13.9
 	github.com/shopspring/decimal v1.4.0
 	github.com/spf13/cobra v1.9.1
-	github.com/spf13/pflag v1.0.6
+	github.com/spf13/pflag v1.0.7
 	github.com/tkuchiki/go-timezone v0.2.3
 	github.com/valyala/fasthttp v1.64.0
 	github.com/valyala/fastjson v1.6.4
