@@ -5,13 +5,15 @@ package dynamodb
 // https://github.com/awsdocs/aws-doc-sdk-examples/blob/master/go/example_code/dynamodb/read_item.go
 
 import (
+	"context"
 	"errors"
 	"strings"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/dynamodb"
-	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 	"github.com/grokify/sogo/database/kvs"
 )
 
@@ -27,7 +29,7 @@ type Item struct {
 
 type Client struct {
 	config         kvs.Config
-	dynamodbClient *dynamodb.DynamoDB
+	dynamodbClient *dynamodb.Client
 }
 
 func NewClient(cfg kvs.Config) (*Client, error) {
@@ -46,14 +48,14 @@ func NewClient(cfg kvs.Config) (*Client, error) {
 		cfg.DynamodbWriteUnits = 1
 	}
 
-	sess, err := session.NewSession(NewAwsConfig(cfg))
+	awsCfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion(cfg.Region))
 	if err != nil {
 		return nil, err
 	}
 
 	return &Client{
 		config:         cfg,
-		dynamodbClient: dynamodb.New(sess)}, nil
+		dynamodbClient: dynamodb.NewFromConfig(awsCfg)}, nil
 }
 
 func (client Client) SetString(key, val string) error {
@@ -61,7 +63,7 @@ func (client Client) SetString(key, val string) error {
 		Key:   key,
 		Value: val}
 
-	av, err := dynamodbattribute.MarshalMap(item)
+	av, err := attributevalue.MarshalMap(item)
 	if err != nil {
 		return err
 	}
@@ -70,16 +72,16 @@ func (client Client) SetString(key, val string) error {
 		Item:      av,
 		TableName: aws.String(client.config.Table)}
 
-	_, err = client.dynamodbClient.PutItem(input)
+	_, err = client.dynamodbClient.PutItem(context.TODO(), input)
 	return err
 }
 
 func (client Client) GetString(key string) (string, error) {
-	result, err := client.dynamodbClient.GetItem(&dynamodb.GetItemInput{
+	result, err := client.dynamodbClient.GetItem(context.TODO(), &dynamodb.GetItemInput{
 		TableName: aws.String(client.config.Table),
-		Key: map[string]*dynamodb.AttributeValue{
-			"key": {
-				S: aws.String(key),
+		Key: map[string]types.AttributeValue{
+			"key": &types.AttributeValueMemberS{
+				Value: key,
 			},
 		},
 	})
@@ -88,7 +90,7 @@ func (client Client) GetString(key string) (string, error) {
 	}
 	item := Item{}
 
-	err = dynamodbattribute.UnmarshalMap(result.Item, &item)
+	err = attributevalue.UnmarshalMap(result.Item, &item)
 	if err != nil {
 		return "", err
 	}
@@ -104,28 +106,28 @@ func (client Client) GetOrEmptyString(key string) string {
 }
 
 func (client Client) CreateTable() (*dynamodb.CreateTableOutput, error) {
-	return client.dynamodbClient.CreateTable(client.createTableInput())
+	return client.dynamodbClient.CreateTable(context.TODO(), client.createTableInput())
 }
 
 func (client Client) createTableInput() *dynamodb.CreateTableInput {
 	return &dynamodb.CreateTableInput{
-		AttributeDefinitions: []*dynamodb.AttributeDefinition{
+		AttributeDefinitions: []types.AttributeDefinition{
 			{
 				AttributeName: aws.String(KeyName),
-				AttributeType: aws.String("S"),
+				AttributeType: types.ScalarAttributeTypeS,
 			},
 			{
 				AttributeName: aws.String(ValueName),
-				AttributeType: aws.String("S"),
+				AttributeType: types.ScalarAttributeTypeS,
 			},
 		},
-		KeySchema: []*dynamodb.KeySchemaElement{
+		KeySchema: []types.KeySchemaElement{
 			{
 				AttributeName: aws.String(KeyName),
-				KeyType:       aws.String("HASH"),
+				KeyType:       types.KeyTypeHash,
 			},
 		},
-		ProvisionedThroughput: &dynamodb.ProvisionedThroughput{
+		ProvisionedThroughput: &types.ProvisionedThroughput{
 			ReadCapacityUnits:  aws.Int64(client.config.DynamodbReadUnits),
 			WriteCapacityUnits: aws.Int64(client.config.DynamodbWriteUnits),
 		},
@@ -133,7 +135,3 @@ func (client Client) createTableInput() *dynamodb.CreateTableInput {
 	}
 }
 
-func NewAwsConfig(cfg kvs.Config) *aws.Config {
-	return &aws.Config{
-		Region: aws.String(cfg.Region)}
-}
