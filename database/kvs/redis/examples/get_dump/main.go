@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 
@@ -26,7 +27,7 @@ func main() {
 		Password:    "",
 		CustomIndex: 0})
 
-	data := client.GetOrEmptyString(opts.Key)
+	data := client.GetOrDefaultString(context.Background(), opts.Key, "")
 
 	fmt.Printf("Data: %v\n", data)
 

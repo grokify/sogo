@@ -6,6 +6,7 @@ package dynamodb
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"strings"
 
@@ -58,7 +59,7 @@ func NewClient(cfg kvs.Config) (*Client, error) {
 		dynamodbClient: dynamodb.NewFromConfig(awsCfg)}, nil
 }
 
-func (client Client) SetString(key, val string) error {
+func (client Client) SetString(ctx context.Context, key, val string) error {
 	item := Item{
 		Key:   key,
 		Value: val}
@@ -72,12 +73,12 @@ func (client Client) SetString(key, val string) error {
 		Item:      av,
 		TableName: aws.String(client.config.Table)}
 
-	_, err = client.dynamodbClient.PutItem(context.TODO(), input)
+	_, err = client.dynamodbClient.PutItem(ctx, input)
 	return err
 }
 
-func (client Client) GetString(key string) (string, error) {
-	result, err := client.dynamodbClient.GetItem(context.TODO(), &dynamodb.GetItemInput{
+func (client Client) GetString(ctx context.Context, key string) (string, error) {
+	result, err := client.dynamodbClient.GetItem(ctx, &dynamodb.GetItemInput{
 		TableName: aws.String(client.config.Table),
 		Key: map[string]types.AttributeValue{
 			"key": &types.AttributeValueMemberS{
@@ -97,16 +98,32 @@ func (client Client) GetString(key string) (string, error) {
 	return item.Value, nil
 }
 
-func (client Client) GetOrEmptyString(key string) string {
-	val, err := client.GetString(key)
+func (client Client) GetOrDefaultString(ctx context.Context, key, def string) string {
+	val, err := client.GetString(ctx, key)
 	if err != nil {
-		return ""
+		return def
 	}
 	return val
 }
 
-func (client Client) CreateTable() (*dynamodb.CreateTableOutput, error) {
-	return client.dynamodbClient.CreateTable(context.TODO(), client.createTableInput())
+func (client Client) SetAny(ctx context.Context, key string, val any) error {
+	bytes, err := json.Marshal(val)
+	if err != nil {
+		return err
+	}
+	return client.SetString(ctx, key, string(bytes))
+}
+
+func (client Client) GetAny(ctx context.Context, key string, val any) error {
+	str, err := client.GetString(ctx, key)
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal([]byte(str), val)
+}
+
+func (client Client) CreateTable(ctx context.Context) (*dynamodb.CreateTableOutput, error) {
+	return client.dynamodbClient.CreateTable(ctx, client.createTableInput())
 }
 
 func (client Client) createTableInput() *dynamodb.CreateTableInput {
@@ -134,4 +151,3 @@ func (client Client) createTableInput() *dynamodb.CreateTableInput {
 		TableName: aws.String(client.config.Table),
 	}
 }
-

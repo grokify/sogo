@@ -17,37 +17,36 @@ func NewClient(cfg kvs.Config) *Client {
 		redisClient: redis.NewClient(NewRedisOptions(cfg))}
 }
 
-func (client Client) SetString(key, val string) error {
+func (client Client) SetString(ctx context.Context, key, val string) error {
 	// For context, see https://github.com/go-redis/redis/issues/582
 	// ctx, _ := context.WithTimeout(context.TODO(), time.Second)
-	return client.redisClient.Set(context.Background(), key, val, 0).Err()
+	return client.redisClient.Set(ctx, key, val, 0).Err()
 }
 
-func (client Client) GetString(key string) (string, error) {
+func (client Client) GetString(ctx context.Context, key string) (string, error) {
 	// ctx, _ := context.WithTimeout(context.TODO(), time.Second)
-	return client.redisClient.Get(context.Background(), key).Result()
+	return client.redisClient.Get(ctx, key).Result()
 }
 
-func (client Client) GetOrEmptyString(key string) string {
+func (client Client) GetOrDefaultString(ctx context.Context, key, def string) string {
 	// ctx, _ := context.WithTimeout(context.TODO(), time.Second)
-	if val, err := client.redisClient.Get(context.Background(), key).Result(); err != nil {
-		return ""
+	if val, err := client.redisClient.Get(ctx, key).Result(); err != nil {
+		return def
 	} else {
 		return val
 	}
 }
 
-func (client Client) SetInterface(key string, val interface{}) error {
+func (client Client) SetAny(ctx context.Context, key string, val any) error {
 	bytes, err := json.Marshal(val)
 	if err != nil {
 		return err
 	}
-	return client.redisClient.Set(
-		context.Background(), key, string(bytes), 0).Err()
+	return client.redisClient.Set(ctx, key, string(bytes), 0).Err()
 }
 
-func (client Client) GetInterface(key string, val interface{}) error {
-	strCmd := client.redisClient.Get(context.Background(), key)
+func (client Client) GetAny(ctx context.Context, key string, val any) error {
+	strCmd := client.redisClient.Get(ctx, key)
 	bytes, err := strCmd.Bytes()
 	if err != nil {
 		return err

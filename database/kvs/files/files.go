@@ -1,6 +1,8 @@
 package files
 
 import (
+	"context"
+	"encoding/json"
 	"os"
 	"strings"
 
@@ -24,7 +26,7 @@ func KeyToFilename(key string) string {
 	return strings.TrimSpace(key) + ".txt"
 }
 
-func (client Client) SetString(key, val string) error {
+func (client Client) SetString(ctx context.Context, key, val string) error {
 	// tempval, err2 = strconv.ParseUint(data["Perm"], 10, 32)
 	return os.WriteFile(
 		KeyToFilename(key),
@@ -32,7 +34,7 @@ func (client Client) SetString(key, val string) error {
 		os.FileMode(client.config.FileMode))
 }
 
-func (client Client) GetString(key string) (string, error) {
+func (client Client) GetString(ctx context.Context, key string) (string, error) {
 	data, err := os.ReadFile(KeyToFilename(key))
 	if err != nil {
 		return "", err
@@ -40,10 +42,26 @@ func (client Client) GetString(key string) (string, error) {
 	return string(data), nil
 }
 
-func (client Client) GetOrEmptyString(key string) string {
-	val, err := client.GetString(key)
+func (client Client) GetOrDefaultString(ctx context.Context, key, def string) string {
+	val, err := client.GetString(ctx, key)
 	if err != nil {
-		return ""
+		return def
 	}
 	return val
+}
+
+func (client Client) SetAny(ctx context.Context, key string, val any) error {
+	bytes, err := json.Marshal(val)
+	if err != nil {
+		return err
+	}
+	return client.SetString(ctx, key, string(bytes))
+}
+
+func (client Client) GetAny(ctx context.Context, key string, val any) error {
+	str, err := client.GetString(ctx, key)
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal([]byte(str), val)
 }

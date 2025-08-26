@@ -1,6 +1,7 @@
 package kvs
 
 import (
+	"context"
 	"encoding/json"
 	"strconv"
 	"strings"
@@ -38,9 +39,9 @@ func (cfg *Config) HostPort() string {
 }
 
 type Client interface {
-	SetString(key, val string) error
-	GetString(key string) (string, error)
-	GetOrEmptyString(key string) string
-	SetInterface(key string, val interface{}) error
-	GetInterface(key string, val interface{}) error
+	SetString(ctx context.Context, key, val string) error
+	GetString(ctx context.Context, key string) (string, error)
+	GetOrDefaultString(ctx context.Context, key, def string) string
+	SetAny(ctx context.Context, key string, val any) error
+	GetAny(ctx context.Context, key string, val any) error
 }

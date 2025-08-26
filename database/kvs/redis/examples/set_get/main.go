@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log/slog"
 
@@ -18,15 +19,15 @@ func main() {
 	key := "hello"
 
 	for i, val := range []string{"world", "monde", "世界", "ప్రపంచ"} {
-		err := client.SetString(key, val)
+		err := client.SetString(context.Background(), key, val)
 		if err != nil {
 			slog.Error(err.Error())
 		} else {
 			slog.Info("successful write",
 				"key", i+1,
 				"set", val,
-				"get", client.GetOrEmptyString(key),
-				"is_equal", (val == client.GetOrEmptyString(key)),
+				"get", client.GetOrDefaultString(context.Background(), key, ""),
+				"is_equal", (val == client.GetOrDefaultString(context.Background(), key, "")),
 			)
 			/*
 				fmt.Printf("(%v) KEY [%v] SET [%v] GET [%v] EQ [%v]\n",
