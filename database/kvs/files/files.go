@@ -4,7 +4,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/grokify/sogo/database/document"
+	"github.com/grokify/sogo/database/kvs"
 )
 
 type Item struct {
@@ -13,10 +13,10 @@ type Item struct {
 }
 
 type Client struct {
-	config document.Config
+	config kvs.Config
 }
 
-func NewClient(cfg document.Config) *Client {
+func NewClient(cfg kvs.Config) *Client {
 	return &Client{config: cfg}
 }
 

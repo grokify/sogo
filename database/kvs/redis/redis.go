@@ -5,14 +5,14 @@ import (
 	"encoding/json"
 
 	redis "github.com/go-redis/redis/v8"
-	"github.com/grokify/sogo/database/document"
+	"github.com/grokify/sogo/database/kvs"
 )
 
 type Client struct {
 	redisClient *redis.Client
 }
 
-func NewClient(cfg document.Config) *Client {
+func NewClient(cfg kvs.Config) *Client {
 	return &Client{
 		redisClient: redis.NewClient(NewRedisOptions(cfg))}
 }
@@ -55,7 +55,7 @@ func (client Client) GetInterface(key string, val interface{}) error {
 	return json.Unmarshal(bytes, val)
 }
 
-func NewRedisOptions(cfg document.Config) *redis.Options {
+func NewRedisOptions(cfg kvs.Config) *redis.Options {
 	return &redis.Options{
 		Addr:     cfg.HostPort(),
 		Password: cfg.Password,

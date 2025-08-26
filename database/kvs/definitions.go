@@ -1,4 +1,4 @@
-package document
+package kvs
 
 import (
 	"encoding/json"

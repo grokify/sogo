@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/grokify/sogo/database/document"
-	"github.com/grokify/sogo/database/document/redis"
+	"github.com/grokify/sogo/database/kvs"
+	"github.com/grokify/sogo/database/kvs/redis"
 )
 
 func main() {
-	client := redis.NewClient(document.Config{
+	client := redis.NewClient(kvs.Config{
 		Host:        "127.0.0.1",
 		Port:        6379,
 		Password:    "",

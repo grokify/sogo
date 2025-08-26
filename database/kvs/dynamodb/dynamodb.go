@@ -12,7 +12,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
-	"github.com/grokify/sogo/database/document"
+	"github.com/grokify/sogo/database/kvs"
 )
 
 const (
@@ -26,11 +26,11 @@ type Item struct {
 }
 
 type Client struct {
-	config         document.Config
+	config         kvs.Config
 	dynamodbClient *dynamodb.DynamoDB
 }
 
-func NewClient(cfg document.Config) (*Client, error) {
+func NewClient(cfg kvs.Config) (*Client, error) {
 	cfg.Region = strings.TrimSpace(cfg.Region)
 	if len(cfg.Region) == 0 {
 		return nil, errors.New("E_NO_REGION_FOR_AWS")
@@ -133,7 +133,7 @@ func (client Client) createTableInput() *dynamodb.CreateTableInput {
 	}
 }
 
-func NewAwsConfig(cfg document.Config) *aws.Config {
+func NewAwsConfig(cfg kvs.Config) *aws.Config {
 	return &aws.Config{
 		Region: aws.String(cfg.Region)}
 }
