@@ -15,6 +15,7 @@ require (
 	github.com/buger/jsonparser v1.1.1
 	github.com/cbroglie/mustache v1.4.0
 	github.com/derekstavis/go-qs v0.0.0-20250518184349-717ef4cb7534
+	github.com/dgraph-io/ristretto v0.2.0
 	github.com/emersion/go-imap v1.2.1
 	github.com/fatih/color v1.18.0
 	github.com/go-logfmt/logfmt v0.6.0
@@ -56,10 +57,10 @@ require (
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/cockroachdb/apd v1.1.0 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
+	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/emersion/go-sasl v0.0.0-20241020182733-b788ff22d5a6 // indirect
 	github.com/huandu/xstrings v1.5.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
-	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/compress v1.18.0 // indirect
