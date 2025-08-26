@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/jessevdk/go-flags"
+
 	"github.com/grokify/sogo/database/kvs"
 	"github.com/grokify/sogo/database/kvs/redis"
-	"github.com/jessevdk/go-flags"
 )
 
 type Options struct {
