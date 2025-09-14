@@ -26,7 +26,7 @@ require (
 	github.com/spf13/cobra v1.10.1
 	github.com/spf13/pflag v1.0.10
 	github.com/tkuchiki/go-timezone v0.2.3
-	github.com/valyala/fasthttp v1.65.0
+	github.com/valyala/fasthttp v1.66.0
 	github.com/valyala/fastjson v1.6.4
 	github.com/valyala/quicktemplate v1.8.0
 	github.com/zhuyie/golzf v0.0.0-20161112031142-8387b0307ade
@@ -56,7 +56,7 @@ require (
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	golang.org/x/exp v0.0.0-20250819193227-8b4c13bb791b // indirect
 	golang.org/x/image v0.30.0 // indirect
-	golang.org/x/net v0.43.0 // indirect
+	golang.org/x/net v0.44.0 // indirect
 	golang.org/x/sys v0.36.0 // indirect
 	golang.org/x/text v0.29.0 // indirect
 )
