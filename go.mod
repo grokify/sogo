@@ -14,7 +14,7 @@ require (
 	github.com/dgraph-io/ristretto v0.2.0
 	github.com/emersion/go-imap v1.2.1
 	github.com/fatih/color v1.18.0
-	github.com/go-logfmt/logfmt v0.6.0
+	github.com/go-logfmt/logfmt v0.6.1
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/gorilla/mux v1.8.1
 	github.com/grokify/mogo v0.71.1
