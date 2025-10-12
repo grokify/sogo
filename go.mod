@@ -30,7 +30,7 @@ require (
 	github.com/valyala/fastjson v1.6.4
 	github.com/valyala/quicktemplate v1.8.0
 	github.com/zhuyie/golzf v0.0.0-20161112031142-8387b0307ade
-	golang.org/x/crypto v0.42.0
+	golang.org/x/crypto v0.43.0
 )
 
 require (
@@ -57,6 +57,6 @@ require (
 	golang.org/x/exp v0.0.0-20251002181428-27f1f14c8bb9 // indirect
 	golang.org/x/image v0.31.0 // indirect
 	golang.org/x/net v0.45.0 // indirect
-	golang.org/x/sys v0.36.0 // indirect
-	golang.org/x/text v0.29.0 // indirect
+	golang.org/x/sys v0.37.0 // indirect
+	golang.org/x/text v0.30.0 // indirect
 )
