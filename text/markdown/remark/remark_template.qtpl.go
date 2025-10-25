@@ -2,7 +2,7 @@
 // See https://github.com/valyala/quicktemplate for details.
 
 //line remark_template.qtpl:1
-package markdown
+package remark
 
 //line remark_template.qtpl:1
 import (

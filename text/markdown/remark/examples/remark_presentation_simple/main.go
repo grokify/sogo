@@ -5,12 +5,12 @@ import (
 	"log"
 	"os"
 
-	"github.com/grokify/sogo/text/markdown"
+	"github.com/grokify/sogo/text/markdown/remark"
 )
 
 func main() {
-	slides := markdown.PresentationData{
-		Slides: []markdown.RemarkSlideData{
+	slides := remark.PresentationData{
+		Slides: []remark.RemarkSlideData{
 			{
 				Layout:   "middle, center, inverse",
 				Class:    "false",
@@ -21,7 +21,7 @@ func main() {
 			},
 		},
 	}
-	html := markdown.RemarkHTML(slides)
+	html := remark.RemarkHTML(slides)
 	fmt.Println(html)
 
 	err := os.WriteFile("test_slides.html", []byte(html), 0600)
