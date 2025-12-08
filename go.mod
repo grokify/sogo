@@ -18,11 +18,10 @@ require (
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/gomarkdown/markdown v0.0.0-20250810172220-2e2c11897d1a
 	github.com/gorilla/mux v1.8.1
-	github.com/grokify/mogo v0.72.0
+	github.com/grokify/mogo v0.72.2
 	github.com/jessevdk/go-flags v1.6.1
 	github.com/leekchan/accounting v1.0.0
 	github.com/oleiade/reflections v1.1.0
-	github.com/phpdave11/gofpdf v1.4.3
 	github.com/pkg/sftp v1.13.10
 	github.com/shopspring/decimal v1.4.0
 	github.com/spf13/cobra v1.10.1
