@@ -104,7 +104,9 @@ func (w ResponseNetHTTP) SetBodyStream(bodyStream io.Reader, bodySize int) error
 }
 
 func (w ResponseNetHTTP) SetCookie(cookie *Cookie) {
-	http.SetCookie(w.Raw, cookie.ToNetHTTP())
+	c := cookie.ToNetHTTP()
+	c.Secure = true
+	http.SetCookie(w.Raw, c)
 }
 
 func NewResReqNetHTTP(res http.ResponseWriter, req *http.Request) (ResponseNetHTTP, *RequestNetHTTP) {
