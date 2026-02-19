@@ -28,7 +28,7 @@ require (
 	github.com/spf13/pflag v1.0.10
 	github.com/tkuchiki/go-timezone v0.2.3
 	github.com/valyala/fasthttp v1.69.0
-	github.com/valyala/fastjson v1.6.7
+	github.com/valyala/fastjson v1.6.8
 	github.com/valyala/quicktemplate v1.8.0
 	github.com/yuin/goldmark v1.7.16
 	github.com/zhuyie/golzf v0.0.0-20161112031142-8387b0307ade
