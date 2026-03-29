@@ -30,7 +30,7 @@ require (
 	github.com/valyala/fasthttp v1.69.0
 	github.com/valyala/fastjson v1.6.10
 	github.com/valyala/quicktemplate v1.8.0
-	github.com/yuin/goldmark v1.7.16
+	github.com/yuin/goldmark v1.8.2
 	github.com/zhuyie/golzf v0.0.0-20161112031142-8387b0307ade
 	golang.org/x/crypto v0.49.0
 )
