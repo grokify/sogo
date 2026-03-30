@@ -11,7 +11,7 @@ require (
 	github.com/derekstavis/go-qs v0.0.0-20250518184349-717ef4cb7534
 	github.com/dgraph-io/ristretto v0.2.0
 	github.com/emersion/go-imap v1.2.1
-	github.com/fatih/color v1.18.0
+	github.com/fatih/color v1.19.0
 	github.com/go-logfmt/logfmt v0.6.1
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/gomarkdown/markdown v0.0.0-20250810172220-2e2c11897d1a
