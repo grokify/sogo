@@ -14,7 +14,7 @@ require (
 	github.com/fatih/color v1.19.0
 	github.com/go-logfmt/logfmt v0.6.1
 	github.com/go-redis/redis/v8 v8.11.5
-	github.com/gomarkdown/markdown v0.0.0-20250810172220-2e2c11897d1a
+	github.com/gomarkdown/markdown v0.0.0-20260217112301-37c66b85d6ab
 	github.com/gorilla/mux v1.8.1
 	github.com/grokify/mogo v0.74.0
 	github.com/jessevdk/go-flags v1.6.1
@@ -36,27 +36,27 @@ require (
 )
 
 require (
-	github.com/andybalholm/brotli v1.2.0 // indirect
-	github.com/aws/aws-lambda-go v1.52.0 // indirect
+	github.com/andybalholm/brotli v1.2.1 // indirect
+	github.com/aws/aws-lambda-go v1.54.0 // indirect
 	github.com/caarlos0/env/v11 v11.4.0 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
-	github.com/clipperhouse/uax29/v2 v2.6.0 // indirect
+	github.com/clipperhouse/uax29/v2 v2.7.0 // indirect
 	github.com/cockroachdb/apd v1.1.0 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/emersion/go-sasl v0.0.0-20241020182733-b788ff22d5a6 // indirect
 	github.com/hhrutter/lzw v1.0.0 // indirect
 	github.com/hhrutter/pkcs7 v0.2.0 // indirect
-	github.com/hhrutter/tiff v1.0.2 // indirect
+	github.com/hhrutter/tiff v1.0.3 // indirect
 	github.com/huandu/xstrings v1.5.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
-	github.com/klauspost/compress v1.18.4 // indirect
+	github.com/klauspost/compress v1.18.5 // indirect
 	github.com/kr/fs v0.1.0 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
-	github.com/mattn/go-runewidth v0.0.19 // indirect
+	github.com/mattn/go-runewidth v0.0.22 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
