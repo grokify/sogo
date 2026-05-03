@@ -13,7 +13,7 @@ func CobraToGoflagsRuntime(cmd *cobra.Command, opts any) error {
 	flagSet := cmd.Flags()
 
 	v := reflect.ValueOf(opts)
-	if v.Kind() != reflect.Ptr || v.Elem().Kind() != reflect.Struct {
+	if v.Kind() != reflect.Pointer || v.Elem().Kind() != reflect.Struct {
 		return fmt.Errorf("opts must be a pointer to a struct")
 	}
 	v = v.Elem()
