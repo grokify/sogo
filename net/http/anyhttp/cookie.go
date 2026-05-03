@@ -12,7 +12,13 @@ type Cookie struct {
 }
 
 func (c *Cookie) ToNetHTTP() *http.Cookie {
-	cookie := http.Cookie{Name: c.Name, Value: c.Value}
+	cookie := http.Cookie{
+		Name:     c.Name,
+		Value:    c.Value,
+		Secure:   true,
+		HttpOnly: true,
+		SameSite: http.SameSiteStrictMode,
+	}
 	return &cookie
 }
 
