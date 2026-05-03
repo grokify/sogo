@@ -6,6 +6,7 @@ import (
 	"github.com/gomarkdown/markdown"
 	"github.com/gomarkdown/markdown/html"
 	"github.com/gomarkdown/markdown/parser"
+	"github.com/grokify/mogo/os/osutil"
 )
 
 func NewMarkdownParserDefault() *parser.Parser {
@@ -27,10 +28,10 @@ func MarkdownToHTML(md []byte) []byte {
 }
 
 func MarkdownToHTMLFile(srcFilename, outFilename string, perm os.FileMode) error {
-	bSrc, err := os.ReadFile(srcFilename)
+	bSrc, err := osutil.ReadFileSecure(srcFilename)
 	if err != nil {
 		return err
 	}
 	bOut := MarkdownToHTML(bSrc)
-	return os.WriteFile(outFilename, bOut, perm)
+	return osutil.WriteFileSecure(outFilename, bOut, perm)
 }

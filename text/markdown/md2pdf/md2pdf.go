@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/grokify/mogo/os/osutil"
 	"github.com/phpdave11/gofpdf"
 
 	"github.com/grokify/sogo/text/markdown/md2html"
@@ -31,12 +32,12 @@ func HTMLToPDFBytes(b []byte) ([]byte, error) {
 }
 
 func HTMLToPDFFile(srcFile, outFile string, perm os.FileMode) error {
-	if b, err := os.ReadFile(srcFile); err != nil {
+	if b, err := osutil.ReadFileSecure(srcFile); err != nil {
 		return err
 	} else if bPDF, err := HTMLToPDFBytes(b); err != nil {
 		return err
 	} else {
-		return os.WriteFile(outFile, bPDF, perm)
+		return osutil.WriteFileSecure(outFile, bPDF, perm)
 	}
 }
 
@@ -51,11 +52,11 @@ func MarkdownToPDFBytes(b []byte, wrapPage bool) ([]byte, error) {
 }
 
 func MarkdownToPDFFile(srcFile, outFile string, perm os.FileMode) error {
-	if b, err := os.ReadFile(srcFile); err != nil {
+	if b, err := osutil.ReadFileSecure(srcFile); err != nil {
 		return err
 	} else if bPDF, err := MarkdownToPDFBytes(b, true); err != nil {
 		return err
 	} else {
-		return os.WriteFile(outFile, bPDF, perm)
+		return osutil.WriteFileSecure(outFile, bPDF, perm)
 	}
 }
