@@ -7,6 +7,7 @@ import (
 	"image/color"
 	"image/png"
 	"io"
+	"math"
 	"os"
 	"strings"
 
@@ -252,9 +253,9 @@ func prepareBackgroundImage(r io.Reader, pageSize PageSize) (image.Image, error)
 		scale = scaleY
 	}
 
-	// Calculate scaled dimensions
-	scaledWidth := int(float64(srcWidth) * scale)
-	scaledHeight := int(float64(srcHeight) * scale)
+	// Calculate scaled dimensions (ceil to ensure full coverage, crop handles overshoot)
+	scaledWidth := int(math.Ceil(float64(srcWidth) * scale))
+	scaledHeight := int(math.Ceil(float64(srcHeight) * scale))
 
 	// Resize the image
 	scaled := imageutil.Resize(scaledWidth, scaledHeight, img, imageutil.ScalerBest())
@@ -469,7 +470,7 @@ func buildTextWatermarkDesc(fontName string, fontSize int, color string, marginL
 	}
 
 	return fmt.Sprintf(
-		"font:%s, points:%d, fillcolor:%s, pos:%s, offset:%.1f -%.1f, scale:1 abs, opacity:1",
+		"font:%s, points:%d, fillcolor:%s, pos:%s, offset:%.1f -%.1f, scale:1 abs, rotation:0, opacity:1",
 		fontName,
 		fontSize,
 		color,
@@ -513,7 +514,7 @@ func addLogoOverlay(pdfBytes []byte, logoReader io.Reader, opts LogoOptions) ([]
 	}
 
 	desc := fmt.Sprintf(
-		"pos:%s, offset:%.1f %.1f, scale:%.3f %s, opacity:%.2f",
+		"pos:%s, offset:%.1f %.1f, scale:%.3f %s, rotation:0, opacity:%.2f",
 		opts.Position,
 		opts.OffsetX,
 		opts.OffsetY,
