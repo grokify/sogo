@@ -6,7 +6,7 @@ require (
 	github.com/apex/gateway v1.1.2
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2
 	github.com/buaazp/fasthttprouter v0.1.1
-	github.com/buger/jsonparser v1.1.2
+	github.com/buger/jsonparser v1.2.0
 	github.com/cbroglie/mustache v1.4.0
 	github.com/derekstavis/go-qs v0.0.0-20250518184349-717ef4cb7534
 	github.com/dgraph-io/ristretto v0.2.0
