@@ -3,6 +3,7 @@ package md2pdf
 import (
 	"bytes"
 	"fmt"
+	"html"
 	"os"
 
 	"github.com/grokify/mogo/os/osutil"
@@ -20,8 +21,12 @@ func HTMLToPDFBytes(b []byte) ([]byte, error) {
 	pdf.SetFont(FontArial, "", 12)
 	pdf.AddPage()
 
-	html := pdf.HTMLBasicNew()
-	html.Write(5, string(b))
+	// Unescape HTML entities (e.g., &lt; → <) since gofpdf's HTMLBasic
+	// renders them as literal text instead of interpreting them
+	content := html.UnescapeString(string(b))
+
+	htmlWriter := pdf.HTMLBasicNew()
+	htmlWriter.Write(5, content)
 
 	var buf bytes.Buffer
 	err := pdf.Output(&buf)
@@ -47,7 +52,6 @@ func MarkdownToPDFBytes(b []byte, wrapPage bool) ([]byte, error) {
 		htBytes = append([]byte("<html><body>"), htBytes...)
 		htBytes = append(htBytes, []byte("</body></html>")...)
 	}
-	fmt.Println(string(htBytes))
 	return HTMLToPDFBytes(htBytes)
 }
 
