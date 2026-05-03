@@ -565,6 +565,14 @@ func CreateMultiPagePDF(pages []Page, pageSize PageSize) ([]byte, error) {
 
 // CreateMultiPagePDFFile creates a multi-page PDF and writes it to outPath.
 func CreateMultiPagePDFFile(pages []Page, pageSize PageSize, outPath string) error {
+	// Track opened files for cleanup
+	var closers []io.Closer
+	defer func() {
+		for _, c := range closers {
+			c.Close()
+		}
+	}()
+
 	// Open any file-based resources
 	for i := range pages {
 		if pages[i].BackgroundPath != "" && pages[i].BackgroundReader == nil {
@@ -572,7 +580,7 @@ func CreateMultiPagePDFFile(pages []Page, pageSize PageSize, outPath string) err
 			if err != nil {
 				return fmt.Errorf("opening background file for page %d: %w", i+1, err)
 			}
-			defer f.Close()
+			closers = append(closers, f)
 			pages[i].BackgroundReader = f
 		}
 		if pages[i].LogoPath != "" && pages[i].Logo != nil && pages[i].LogoReader == nil {
@@ -580,7 +588,7 @@ func CreateMultiPagePDFFile(pages []Page, pageSize PageSize, outPath string) err
 			if err != nil {
 				return fmt.Errorf("opening logo file for page %d: %w", i+1, err)
 			}
-			defer f.Close()
+			closers = append(closers, f)
 			pages[i].LogoReader = f
 		}
 	}
