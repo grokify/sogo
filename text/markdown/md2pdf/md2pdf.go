@@ -3,8 +3,9 @@ package md2pdf
 import (
 	"bytes"
 	"fmt"
-	"html"
 	"os"
+	"regexp"
+	"strings"
 
 	"github.com/grokify/mogo/os/osutil"
 	"github.com/phpdave11/gofpdf"
@@ -16,14 +17,86 @@ const (
 	FontArial = "Arial"
 )
 
+// convertHTMLForGofpdf converts HTML to a format compatible with gofpdf's HTMLBasic.
+// HTMLBasic only supports <b>, <i>, <u>, and <a> tags. This function converts
+// other common HTML elements to compatible equivalents.
+func convertHTMLForGofpdf(htmlStr string) string {
+	s := htmlStr
+
+	// Convert content inside <code> tags
+	// Note: gofpdf's HTMLBasic strips anything that looks like <tagname>, so users
+	// should use {braces} instead of <angles> for placeholder text in code blocks
+	codePattern := regexp.MustCompile(`<code>(.*?)</code>`)
+	s = codePattern.ReplaceAllStringFunc(s, func(match string) string {
+		content := codePattern.FindStringSubmatch(match)[1]
+		// Unescape common HTML entities
+		content = strings.ReplaceAll(content, "&amp;", "&")
+		content = strings.ReplaceAll(content, "&quot;", "\"")
+		// Note: &lt; and &gt; are intentionally NOT unescaped because gofpdf
+		// would interpret <text> as an HTML tag and strip it
+		// Wrap in bold as a visual indicator (since gofpdf doesn't support monospace)
+		return "<b>[" + content + "]</b>"
+	})
+
+	// Convert headers to bold with line breaks
+	for i := 6; i >= 1; i-- {
+		openTag := fmt.Sprintf("<h%d[^>]*>", i)
+		closeTag := fmt.Sprintf("</h%d>", i)
+		s = regexp.MustCompile(openTag).ReplaceAllString(s, "<br><br><b>")
+		s = strings.ReplaceAll(s, closeTag, "</b><br><br>")
+	}
+
+	// Convert paragraphs to line breaks
+	s = regexp.MustCompile(`<p[^>]*>`).ReplaceAllString(s, "")
+	s = strings.ReplaceAll(s, "</p>", "<br><br>")
+
+	// Convert ordered lists with numbers
+	olPattern := regexp.MustCompile(`(?s)<ol[^>]*>(.*?)</ol>`)
+	s = olPattern.ReplaceAllStringFunc(s, func(match string) string {
+		inner := olPattern.FindStringSubmatch(match)[1]
+		counter := 1
+		liPattern := regexp.MustCompile(`<li>(.*?)</li>`)
+		inner = liPattern.ReplaceAllStringFunc(inner, func(li string) string {
+			content := liPattern.FindStringSubmatch(li)[1]
+			result := fmt.Sprintf("%d. %s<br>", counter, content)
+			counter++
+			return result
+		})
+		return "<br>" + inner + "<br>"
+	})
+
+	// Convert unordered lists with dashes
+	ulPattern := regexp.MustCompile(`(?s)<ul[^>]*>(.*?)</ul>`)
+	s = ulPattern.ReplaceAllStringFunc(s, func(match string) string {
+		inner := ulPattern.FindStringSubmatch(match)[1]
+		inner = strings.ReplaceAll(inner, "<li>", "- ")
+		inner = strings.ReplaceAll(inner, "</li>", "<br>")
+		return "<br>" + inner + "<br>"
+	})
+
+	// Remove other unsupported tags (html, body, pre, etc.)
+	s = regexp.MustCompile(`<pre[^>]*>`).ReplaceAllString(s, "")
+	s = strings.ReplaceAll(s, "</pre>", "")
+	s = regexp.MustCompile(`<html[^>]*>`).ReplaceAllString(s, "")
+	s = strings.ReplaceAll(s, "</html>", "")
+	s = regexp.MustCompile(`<body[^>]*>`).ReplaceAllString(s, "")
+	s = strings.ReplaceAll(s, "</body>", "")
+
+	// Clean up excessive line breaks
+	s = regexp.MustCompile(`(<br>\s*){3,}`).ReplaceAllString(s, "<br><br>")
+	s = strings.TrimPrefix(s, "<br>")
+	s = strings.TrimPrefix(s, "<br>")
+
+	return s
+}
+
 func HTMLToPDFBytes(b []byte) ([]byte, error) {
 	pdf := gofpdf.New("P", "mm", "A4", "")
 	pdf.SetFont(FontArial, "", 12)
 	pdf.AddPage()
 
-	// Unescape HTML entities (e.g., &lt; → <) since gofpdf's HTMLBasic
-	// renders them as literal text instead of interpreting them
-	content := html.UnescapeString(string(b))
+	// Convert HTML to gofpdf-compatible format
+	content := convertHTMLForGofpdf(string(b))
 
 	htmlWriter := pdf.HTMLBasicNew()
 	htmlWriter.Write(5, content)

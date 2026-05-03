@@ -9,6 +9,6 @@ A example file for Markdown to PDF conversion
 
 ## Instructions
 
-`md2html <inputfile> <outputfile>`
+`md2html {inputfile} {outputfile}`
 
-If `outputfile` is not provided, the input file will be appended with `.pdf`
+If `{outputfile}` is not provided, the input file will be appended with `.pdf`
