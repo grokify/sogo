@@ -261,10 +261,10 @@ func prepareBackgroundImage(r io.Reader, pageSize PageSize) (image.Image, error)
 	scaled := imageutil.Resize(scaledWidth, scaledHeight, img, imageutil.ScalerBest())
 
 	// Center crop to exact target dimensions
-	if scaled.Bounds().Dx() > targetWidth {
+	if scaled.Bounds().Dx() != targetWidth {
 		scaled = imageutil.CropX(scaled, targetWidth, imageutil.AlignCenter)
 	}
-	if scaled.Bounds().Dy() > targetHeight {
+	if scaled.Bounds().Dy() != targetHeight {
 		scaled = imageutil.CropY(scaled, targetHeight, imageutil.AlignCenter)
 	}
 

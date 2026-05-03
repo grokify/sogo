@@ -24,6 +24,7 @@
       ],
       "fixed": [
         { "description": "`md2pdf`: handle gofpdf HTMLBasic limitations (headers, lists, code blocks, unsupported tags)", "commit": "4967309" },
+        { "description": "`pdf`: crop image when dimensions don't match target exactly", "commit": "a806df1" },
         { "description": "`pdf`: add explicit `rotation:0` to watermark descriptors for consistent behavior", "commit": "c62e0b5" },
         { "description": "`pdf`: avoid deferred file handle accumulation in `CreateMultiPagePDFFile` loop", "commit": "59fec6b" },
         { "description": "`markdown`: use `osutil.ReadFileSecure`/`WriteFileSecure` to prevent path traversal (G703)", "commit": "30170ae" },
