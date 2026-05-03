@@ -14,9 +14,9 @@ require (
 	github.com/fatih/color v1.19.0
 	github.com/go-logfmt/logfmt v0.6.1
 	github.com/go-redis/redis/v8 v8.11.5
-	github.com/gomarkdown/markdown v0.0.0-20260217112301-37c66b85d6ab
+	github.com/gomarkdown/markdown v0.0.0-20260417124207-7d523f7318df
 	github.com/gorilla/mux v1.8.1
-	github.com/grokify/mogo v0.74.2
+	github.com/grokify/mogo v0.74.4
 	github.com/jessevdk/go-flags v1.6.1
 	github.com/leekchan/accounting v1.0.0
 	github.com/oleiade/reflections v1.1.0
@@ -38,7 +38,7 @@ require (
 require (
 	github.com/andybalholm/brotli v1.2.1 // indirect
 	github.com/aws/aws-lambda-go v1.54.0 // indirect
-	github.com/caarlos0/env/v11 v11.4.0 // indirect
+	github.com/caarlos0/env/v11 v11.4.1 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/clipperhouse/uax29/v2 v2.7.0 // indirect
 	github.com/cockroachdb/apd v1.1.0 // indirect
@@ -51,17 +51,14 @@ require (
 	github.com/huandu/xstrings v1.5.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/joho/godotenv v1.5.1 // indirect
-	github.com/json-iterator/go v1.1.12 // indirect
-	github.com/klauspost/compress v1.18.5 // indirect
+	github.com/klauspost/compress v1.18.6 // indirect
 	github.com/kr/fs v0.1.0 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
-	github.com/mattn/go-isatty v0.0.20 // indirect
+	github.com/mattn/go-isatty v0.0.22 // indirect
 	github.com/mattn/go-runewidth v0.0.23 // indirect
-	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
-	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
-	golang.org/x/exp v0.0.0-20260312153236-7ab1446f8b90 // indirect
+	golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f // indirect
 	golang.org/x/image v0.39.0 // indirect
 	golang.org/x/net v0.53.0 // indirect
 	golang.org/x/sys v0.43.0 // indirect
