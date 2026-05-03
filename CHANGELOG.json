@@ -1,0 +1,194 @@
+{
+  "irVersion": "1.0",
+  "project": "sogo",
+  "repository": "https://github.com/grokify/sogo",
+  "versioning": "semver",
+  "commitConvention": "conventional",
+  "maintainers": ["grokify", "johncwang@gmail.com"],
+  "releases": [
+    {
+      "version": "v0.15.0",
+      "date": "2026-05-03",
+      "highlights": [
+        { "description": "PDF background image with text overlay, multi-page support, and per-segment styling" },
+        { "description": "Security hardening: secure file operations (G703), secure cookie attributes (G124)" }
+      ],
+      "added": [
+        { "description": "`pdf`: add `CreateBackgroundPDF()` and `CreateBackgroundPDFFile()` for PDFs with background image, logo, and text overlay", "commit": "e20a22a" },
+        { "description": "`pdf`: add `CreateMultiPagePDF()` and `CreateMultiPagePDFFile()` for multi-page PDF generation", "commit": "66f3fb5" },
+        { "description": "`pdf`: add `TextBlock` type for per-segment style overrides (font, size, color, alignment)", "commit": "66f3fb5" },
+        { "description": "`pdf`: add `TextAlign` type with `Left`, `Center`, `Right` alignment options", "commit": "66f3fb5" },
+        { "description": "`pdf`: add `Page` struct for per-page configuration in multi-page PDFs", "commit": "66f3fb5" },
+        { "description": "`pdf`: add logo overlay support with configurable position and scaling", "commit": "e20a22a" },
+        { "description": "`pdf`: add markdown parsing helpers for text segments", "commit": "e20a22a" }
+      ],
+      "fixed": [
+        { "description": "`pdf`: avoid deferred file handle accumulation in `CreateMultiPagePDFFile` loop", "commit": "59fec6b" },
+        { "description": "`markdown`: use `osutil.ReadFileSecure`/`WriteFileSecure` to prevent path traversal (G703)", "commit": "30170ae" },
+        { "description": "`anyhttp`: add `Secure`, `HttpOnly`, `SameSite=Strict` to `http.Cookie` (G124)", "commit": "9bc313f" },
+        { "description": "`cobrautil`: use `reflect.Pointer` instead of deprecated `reflect.Ptr`", "commit": "141d123" }
+      ],
+      "tests": [
+        { "description": "`pdf`: add comprehensive tests for background PDF generation, logo overlay, markdown parsing", "commit": "d4337fa" }
+      ]
+    },
+    {
+      "version": "v0.14.0",
+      "date": "2026-02-14",
+      "commit": "0fcf354",
+      "highlights": [
+        { "description": "Markdown to PDF conversion with `md2pdf` package and example CLI" }
+      ],
+      "added": [
+        { "description": "`text/markdown/md2pdf`: add `MarkdownToPDFBytes()`, `MarkdownToPDFFile()`, `HTMLToPDFBytes()`, `HTMLToPDFFile()`", "commit": "aa225da" },
+        { "description": "`text/markdown/md2pdf/cmd/md2pdf`: add example CLI for markdown to PDF conversion", "commit": "d851609" },
+        { "description": "`text/markdown/md2html`: add `MarkdownToHTMLGoldmark()` using goldmark renderer", "commit": "b17eeee" }
+      ]
+    },
+    {
+      "version": "v0.13.0",
+      "date": "2025-12-12",
+      "commit": "c199fc6",
+      "highlights": [
+        { "description": "PDF file merging with `WriteFileMerged()`" }
+      ],
+      "added": [
+        { "description": "`pdf`: add `WriteFileMerged()` for merging multiple PDF files into one", "commit": "c199fc6" }
+      ]
+    },
+    {
+      "version": "v0.12.0",
+      "date": "2025-08-26",
+      "commit": "8974471",
+      "highlights": [
+        { "description": "Ristretto cache support, DynamoDB utilities moved to awsgo" }
+      ],
+      "added": [
+        { "description": "`database/kvs/ristretto`: add Ristretto cache client implementation", "commit": "37cad63" }
+      ],
+      "changed": [
+        { "description": "`database/kvs/dynamodb`: move to `github.com/grokify/awsgo/dynamodbutil`", "commit": "8974471" },
+        { "description": "`database/kvs`: update `Client` interface", "commit": "f020a7c" }
+      ]
+    },
+    {
+      "version": "v0.11.0",
+      "date": "2025-05-18",
+      "commit": "1f43001",
+      "highlights": [
+        { "description": "Cobra command flag utilities for go-flags struct binding" }
+      ],
+      "added": [
+        { "description": "`flag/cobrautil`: add go-flags struct bindings for Cobra commands", "commit": "7d12b47" }
+      ]
+    },
+    {
+      "version": "v0.10.0",
+      "date": "2025-01-18",
+      "commit": "7c4a1a2",
+      "highlights": [
+        { "description": "Structured logging utilities with ANSI color support" }
+      ],
+      "added": [
+        { "description": "`log/slogutil`: add `log/slog` compatible functions with ANSI color output", "commit": "7c4a1a2" }
+      ]
+    },
+    {
+      "version": "v0.9.0",
+      "date": "2025-01-12",
+      "commit": "dd76959",
+      "highlights": [
+        { "description": "Mustache template utilities" }
+      ],
+      "added": [
+        { "description": "`text/mustacheutil`: add mustache template helpers", "commit": "dd76959" }
+      ]
+    },
+    {
+      "version": "v0.8.0",
+      "date": "2024-04-14",
+      "commit": "9cf3750",
+      "highlights": [
+        { "description": "Renamed back to `sogo` from `xgo`" }
+      ],
+      "changed": [
+        { "description": "Rename module from `github.com/grokify/xgo` back to `github.com/grokify/sogo`", "commit": "9cf3750" }
+      ]
+    },
+    {
+      "version": "v0.7.0",
+      "date": "2023-12-10",
+      "commit": "8056f30",
+      "highlights": [
+        { "description": "Currency formatting utilities" }
+      ],
+      "added": [
+        { "description": "`text/currencyutil`: add `Amount` type for currency amounts", "commit": "2786ee1" },
+        { "description": "`text/currencyutil`: add `Formatter` for currency formatting", "commit": "59fea2e" }
+      ]
+    },
+    {
+      "version": "v0.6.0",
+      "date": "2023-11-25",
+      "commit": "db36ab1",
+      "highlights": [
+        { "description": "Renamed to `xgo` from `sogo`" }
+      ],
+      "changed": [
+        { "description": "Rename module from `github.com/grokify/sogo` to `github.com/grokify/xgo`", "commit": "db36ab1" }
+      ]
+    },
+    {
+      "version": "v0.5.0",
+      "date": "2023-11-24",
+      "commit": "164ec1c",
+      "highlights": [
+        { "description": "Network utilities transferred from gonet" }
+      ],
+      "added": [
+        { "description": "`net`: transfer IMAP, mail, SFTP, and URL utilities from `gonet`", "commit": "164ec1c" }
+      ]
+    },
+    {
+      "version": "v0.4.0",
+      "date": "2023-11-24",
+      "commit": "6f81561",
+      "highlights": [
+        { "description": "Various utilities transferred from mogo" }
+      ],
+      "added": [
+        { "description": "Transfer compression, encoding, logging, path, reflect, text, and time utilities from `mogo`", "commit": "6f81561" }
+      ]
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2023-11-24",
+      "commit": "e0f72ad",
+      "highlights": [
+        { "description": "Renamed to `sogo` from `gostor`" }
+      ],
+      "changed": [
+        { "description": "Rename module from `github.com/grokify/gostor` to `github.com/grokify/sogo`", "commit": "e0f72ad" }
+      ]
+    },
+    {
+      "version": "v0.2.0",
+      "date": "2021-08-07",
+      "commit": "354bc37",
+      "changed": [
+        { "description": "`Client` interface: extend with additional methods", "commit": "9b58236" }
+      ]
+    },
+    {
+      "version": "v0.1.0",
+      "date": "2020-10-26",
+      "commit": "89c17e7",
+      "highlights": [
+        { "description": "Initial release as `gostor` - Go storage utilities for DynamoDB, Redis, and file-based key-value stores" }
+      ],
+      "added": [
+        { "description": "`database/document`: add DynamoDB, Redis, and file-based document store implementations", "commit": "89c17e7" }
+      ]
+    }
+  ]
+}
