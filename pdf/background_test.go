@@ -395,3 +395,256 @@ func TestDefaultLogoOptions(t *testing.T) {
 		t.Error("ScaleAbs should be false by default")
 	}
 }
+
+func TestCreateBackgroundPDF_WithTextBlocks(t *testing.T) {
+	// Create background image
+	bgImg := createTestImage(800, 1000, color.RGBA{R: 50, G: 50, B: 100, A: 255})
+	var bgBuf bytes.Buffer
+	if err := png.Encode(&bgBuf, bgImg); err != nil {
+		t.Fatalf("encoding background image: %v", err)
+	}
+
+	opts := BackgroundPDFOptions{
+		PageSize: PageSizeLetter,
+		TextStyle: TextStyle{
+			FontName:   "Helvetica",
+			FontSize:   12,
+			Color:      "1 1 1", // white
+			MarginTop:  200,
+			MarginLeft: 72,
+			LineHeight: 1.5,
+		},
+		TextBlocks: []TextBlock{
+			{Text: "Release Bill of Materials", FontSize: 28},
+			{Text: "Chicago (Federal)", FontSize: 28},
+			{Text: "", MarginTop: 16}, // spacer
+			{Text: "Confidential – Provided Under NDA", FontSize: 16},
+		},
+	}
+
+	pdfBytes, err := CreateBackgroundPDF(&bgBuf, "", opts)
+	if err != nil {
+		t.Fatalf("CreateBackgroundPDF with TextBlocks: %v", err)
+	}
+
+	if len(pdfBytes) < 5 || string(pdfBytes[:5]) != "%PDF-" {
+		t.Error("output doesn't appear to be a valid PDF")
+	}
+}
+
+func TestCreateBackgroundPDF_TextBlockStyleOverrides(t *testing.T) {
+	bgImg := createTestImage(612, 792, color.RGBA{R: 255, G: 255, B: 255, A: 255})
+	var bgBuf bytes.Buffer
+	if err := png.Encode(&bgBuf, bgImg); err != nil {
+		t.Fatalf("encoding background: %v", err)
+	}
+
+	opts := BackgroundPDFOptions{
+		PageSize: PageSizeLetter,
+		TextStyle: TextStyle{
+			FontName:   "Helvetica",
+			FontSize:   12,
+			Color:      "0 0 0",
+			MarginTop:  72,
+			MarginLeft: 72,
+			LineHeight: 1.5,
+		},
+		TextBlocks: []TextBlock{
+			{Text: "Title in Courier", FontName: "Courier", FontSize: 24},
+			{Text: "Red subtitle", FontSize: 16, Color: "1 0 0"},
+			{Text: "Body text inherits base style"},
+		},
+	}
+
+	pdfBytes, err := CreateBackgroundPDF(&bgBuf, "", opts)
+	if err != nil {
+		t.Fatalf("CreateBackgroundPDF: %v", err)
+	}
+
+	if len(pdfBytes) < 5 || string(pdfBytes[:5]) != "%PDF-" {
+		t.Error("output doesn't appear to be a valid PDF")
+	}
+}
+
+func TestCreateMultiPagePDF(t *testing.T) {
+	// Create background for page 1
+	bgImg := createTestImage(612, 792, color.RGBA{R: 0, G: 50, B: 100, A: 255})
+	var bgBuf bytes.Buffer
+	if err := png.Encode(&bgBuf, bgImg); err != nil {
+		t.Fatalf("encoding background: %v", err)
+	}
+
+	pages := []Page{
+		{
+			BackgroundReader: &bgBuf,
+			TextStyle: TextStyle{
+				FontName:   "Helvetica",
+				FontSize:   12,
+				Color:      "1 1 1",
+				MarginTop:  200,
+				MarginLeft: 72,
+				LineHeight: 1.5,
+			},
+			TextBlocks: []TextBlock{
+				{Text: "Cover Page Title", FontSize: 28},
+			},
+		},
+		{
+			// Page 2: blank white page with black text
+			BackgroundReader: nil, // white page
+			TextStyle: TextStyle{
+				FontName:   "Helvetica",
+				FontSize:   12,
+				Color:      "0 0 0",
+				MarginTop:  72,
+				MarginLeft: 72,
+				LineHeight: 1.5,
+			},
+			MarkdownText: "# Copyright Notice\n\nThis is the copyright page.",
+		},
+	}
+
+	pdfBytes, err := CreateMultiPagePDF(pages, PageSizeLetter)
+	if err != nil {
+		t.Fatalf("CreateMultiPagePDF: %v", err)
+	}
+
+	if len(pdfBytes) < 5 || string(pdfBytes[:5]) != "%PDF-" {
+		t.Error("output doesn't appear to be a valid PDF")
+	}
+}
+
+func TestCreateMultiPagePDF_SinglePage(t *testing.T) {
+	pages := []Page{
+		{
+			BackgroundReader: nil,
+			TextStyle: TextStyle{
+				FontName:   "Helvetica",
+				FontSize:   12,
+				Color:      "0 0 0",
+				MarginTop:  72,
+				MarginLeft: 72,
+				LineHeight: 1.5,
+			},
+			MarkdownText: "# Single Page\n\nJust one page.",
+		},
+	}
+
+	pdfBytes, err := CreateMultiPagePDF(pages, PageSizeLetter)
+	if err != nil {
+		t.Fatalf("CreateMultiPagePDF single page: %v", err)
+	}
+
+	if len(pdfBytes) < 5 || string(pdfBytes[:5]) != "%PDF-" {
+		t.Error("output doesn't appear to be a valid PDF")
+	}
+}
+
+func TestCreateMultiPagePDF_BlankPage(t *testing.T) {
+	// Create just a blank page with no text
+	pages := []Page{
+		{
+			BackgroundReader: nil,
+			TextStyle:        TextStyle{},
+			MarkdownText:     "",
+		},
+	}
+
+	pdfBytes, err := CreateMultiPagePDF(pages, PageSizeLetter)
+	if err != nil {
+		t.Fatalf("CreateMultiPagePDF blank: %v", err)
+	}
+
+	if len(pdfBytes) < 5 || string(pdfBytes[:5]) != "%PDF-" {
+		t.Error("output doesn't appear to be a valid PDF")
+	}
+}
+
+func TestTextAlignment(t *testing.T) {
+	bgImg := createTestImage(612, 792, color.RGBA{R: 255, G: 255, B: 255, A: 255})
+	var bgBuf bytes.Buffer
+	if err := png.Encode(&bgBuf, bgImg); err != nil {
+		t.Fatalf("encoding background: %v", err)
+	}
+
+	tests := []struct {
+		name  string
+		align TextAlign
+	}{
+		{"left", TextAlignLeft},
+		{"center", TextAlignCenter},
+		{"right", TextAlignRight},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			bgBuf.Reset()
+			if err := png.Encode(&bgBuf, bgImg); err != nil {
+				t.Fatalf("encoding background: %v", err)
+			}
+
+			opts := BackgroundPDFOptions{
+				PageSize: PageSizeLetter,
+				TextStyle: TextStyle{
+					FontName:    "Helvetica",
+					FontSize:    12,
+					Color:       "0 0 0",
+					MarginTop:   72,
+					MarginLeft:  72,
+					MarginRight: 72,
+					LineHeight:  1.5,
+					Align:       tt.align,
+				},
+				TextBlocks: []TextBlock{
+					{Text: "Aligned text line"},
+				},
+			}
+
+			pdfBytes, err := CreateBackgroundPDF(&bgBuf, "", opts)
+			if err != nil {
+				t.Fatalf("CreateBackgroundPDF with align %s: %v", tt.name, err)
+			}
+
+			if len(pdfBytes) < 5 || string(pdfBytes[:5]) != "%PDF-" {
+				t.Error("output doesn't appear to be a valid PDF")
+			}
+		})
+	}
+}
+
+func TestTextBlockAlignmentOverride(t *testing.T) {
+	bgImg := createTestImage(612, 792, color.RGBA{R: 255, G: 255, B: 255, A: 255})
+	var bgBuf bytes.Buffer
+	if err := png.Encode(&bgBuf, bgImg); err != nil {
+		t.Fatalf("encoding background: %v", err)
+	}
+
+	opts := BackgroundPDFOptions{
+		PageSize: PageSizeLetter,
+		TextStyle: TextStyle{
+			FontName:    "Helvetica",
+			FontSize:    12,
+			Color:       "0 0 0",
+			MarginTop:   72,
+			MarginLeft:  72,
+			MarginRight: 72,
+			LineHeight:  1.5,
+			Align:       TextAlignLeft, // base is left
+		},
+		TextBlocks: []TextBlock{
+			{Text: "Left aligned (default)"},
+			{Text: "Centered text", Align: TextAlignCenter},
+			{Text: "Right aligned", Align: TextAlignRight},
+			{Text: "Back to left"},
+		},
+	}
+
+	pdfBytes, err := CreateBackgroundPDF(&bgBuf, "", opts)
+	if err != nil {
+		t.Fatalf("CreateBackgroundPDF with mixed alignment: %v", err)
+	}
+
+	if len(pdfBytes) < 5 || string(pdfBytes[:5]) != "%PDF-" {
+		t.Error("output doesn't appear to be a valid PDF")
+	}
+}

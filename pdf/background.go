@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"image"
+	"image/color"
 	"image/png"
 	"io"
 	"os"
@@ -29,15 +30,36 @@ var (
 	PageSizeA4 = PageSize{Width: 595, Height: 842}
 )
 
+// TextAlign represents horizontal text alignment.
+type TextAlign string
+
+const (
+	TextAlignLeft   TextAlign = "left"
+	TextAlignCenter TextAlign = "center"
+	TextAlignRight  TextAlign = "right"
+)
+
 // TextStyle defines styling for text overlay.
 type TextStyle struct {
-	FontName    string  // e.g., "Helvetica", "Courier"
-	FontSize    float64 // points
-	Color       string  // e.g., "0 0 0" (RGB) or "#000000"
-	MarginTop   float64 // points from top
-	MarginLeft  float64 // points from left
-	MarginRight float64 // points from right (used to calculate line width)
-	LineHeight  float64 // multiplier (e.g., 1.5)
+	FontName    string    // e.g., "Helvetica", "Courier"
+	FontSize    float64   // points
+	Color       string    // e.g., "0 0 0" (RGB) or "#000000"
+	MarginTop   float64   // points from top
+	MarginLeft  float64   // points from left
+	MarginRight float64   // points from right (used to calculate line width)
+	LineHeight  float64   // multiplier (e.g., 1.5)
+	Align       TextAlign // horizontal alignment (default: left)
+}
+
+// TextBlock represents a single block of text with optional style overrides.
+// Empty values inherit from the parent TextStyle.
+type TextBlock struct {
+	Text      string    // The text to render
+	FontName  string    // Override font (empty = inherit from TextStyle)
+	FontSize  float64   // Override font size in points (0 = inherit from TextStyle)
+	Color     string    // Override color (empty = inherit from TextStyle)
+	MarginTop float64   // Additional top margin before this block in points
+	Align     TextAlign // Override alignment (empty = inherit from TextStyle)
 }
 
 // LogoPosition represents anchor positions for logo placement.
@@ -94,9 +116,22 @@ func DefaultTextStyle() TextStyle {
 type BackgroundPDFOptions struct {
 	PageSize   PageSize
 	TextStyle  TextStyle
+	TextBlocks []TextBlock  // If set, used instead of markdown text for precise control
 	Logo       *LogoOptions // Optional logo configuration (nil = no logo)
 	LogoReader io.Reader    // Logo image reader (used with CreateBackgroundPDF)
 	LogoPath   string       // Logo image path (used with CreateBackgroundPDFFile)
+}
+
+// Page represents a single page in a multi-page PDF.
+type Page struct {
+	BackgroundReader io.Reader    // Background image reader (nil = white page)
+	BackgroundPath   string       // Background image path (file-based alternative)
+	Logo             *LogoOptions // Optional logo configuration
+	LogoReader       io.Reader    // Logo image reader
+	LogoPath         string       // Logo image path
+	TextStyle        TextStyle    // Base text style
+	TextBlocks       []TextBlock  // Styled text blocks (takes precedence over MarkdownText)
+	MarkdownText     string       // Markdown text (used if TextBlocks is empty)
 }
 
 // DefaultBackgroundPDFOptions returns default options for letter size with standard text styling.
@@ -109,7 +144,7 @@ func DefaultBackgroundPDFOptions() BackgroundPDFOptions {
 
 // CreateBackgroundPDF creates a PDF with a background image, optional logo, and text overlay.
 // The background image is scaled to cover the page (minimum scaling to fill, then center-cropped).
-// Text is rendered from Markdown with basic formatting support (headers, paragraphs).
+// Text is rendered from either TextBlocks (if provided) or Markdown with basic formatting support.
 // Logo is placed according to LogoOptions if provided.
 func CreateBackgroundPDF(
 	imageReader io.Reader,
@@ -136,8 +171,14 @@ func CreateBackgroundPDF(
 		}
 	}
 
-	// Step 4: Add text overlay if markdown text is provided
-	if strings.TrimSpace(markdownText) != "" {
+	// Step 4: Add text overlay
+	// TextBlocks take precedence over markdown text
+	if len(opts.TextBlocks) > 0 {
+		pdfBytes, err = addTextBlocksOverlay(pdfBytes, opts.TextBlocks, opts.TextStyle)
+		if err != nil {
+			return nil, fmt.Errorf("adding text blocks overlay: %w", err)
+		}
+	} else if strings.TrimSpace(markdownText) != "" {
 		pdfBytes, err = addTextOverlay(pdfBytes, markdownText, opts.TextStyle)
 		if err != nil {
 			return nil, fmt.Errorf("adding text overlay: %w", err)
@@ -301,21 +342,10 @@ func addTextOverlay(pdfBytes []byte, markdown string, style TextStyle) ([]byte, 
 		}
 
 		// Calculate Y offset from top of page
-		// pdfcpu uses bottom-left origin, so we need to convert
-		// offset is relative to the anchor position
 		yFromTop := currentY
 
 		// Build watermark description string
-		// Using position tl (top-left) with offset
-		// Note: pdfcpu expects integer points
-		desc := fmt.Sprintf(
-			"font:%s, points:%d, fillcolor:%s, pos:tl, offset:%.1f -%.1f, scale:1 abs, opacity:1",
-			style.FontName,
-			int(fontSize),
-			style.Color,
-			style.MarginLeft,
-			yFromTop,
-		)
+		desc := buildTextWatermarkDesc(style.FontName, int(fontSize), style.Color, style.MarginLeft, yFromTop, style.Align, style.MarginRight)
 
 		wm, err := api.TextWatermark(text, desc, true, false, types.POINTS)
 		if err != nil {
@@ -344,6 +374,109 @@ func addTextOverlay(pdfBytes []byte, markdown string, style TextStyle) ([]byte, 
 	}
 
 	return outBuf.Bytes(), nil
+}
+
+// addTextBlocksOverlay adds styled text blocks onto the PDF.
+func addTextBlocksOverlay(pdfBytes []byte, blocks []TextBlock, baseStyle TextStyle) ([]byte, error) {
+	if len(blocks) == 0 {
+		return pdfBytes, nil
+	}
+
+	currentY := baseStyle.MarginTop
+	watermarks := make([]*model.Watermark, 0, len(blocks))
+
+	for _, block := range blocks {
+		// Apply any additional margin before this block
+		if block.MarginTop > 0 {
+			currentY += block.MarginTop
+		}
+
+		// Resolve effective values (block overrides or base style)
+		fontName := baseStyle.FontName
+		if block.FontName != "" {
+			fontName = block.FontName
+		}
+
+		fontSize := baseStyle.FontSize
+		if block.FontSize > 0 {
+			fontSize = block.FontSize
+		}
+
+		color := baseStyle.Color
+		if block.Color != "" {
+			color = block.Color
+		}
+
+		align := baseStyle.Align
+		if block.Align != "" {
+			align = block.Align
+		}
+
+		// Skip empty text blocks (they're just spacers)
+		if strings.TrimSpace(block.Text) == "" {
+			// Still advance Y position for empty blocks with default line height
+			currentY += fontSize * baseStyle.LineHeight
+			continue
+		}
+
+		// Build watermark description
+		desc := buildTextWatermarkDesc(fontName, int(fontSize), color, baseStyle.MarginLeft, currentY, align, baseStyle.MarginRight)
+
+		wm, err := api.TextWatermark(block.Text, desc, true, false, types.POINTS)
+		if err != nil {
+			return nil, fmt.Errorf("creating text watermark: %w", err)
+		}
+		watermarks = append(watermarks, wm)
+
+		// Advance Y position for next line
+		currentY += fontSize * baseStyle.LineHeight
+	}
+
+	if len(watermarks) == 0 {
+		return pdfBytes, nil
+	}
+
+	// Apply all watermarks to the PDF
+	rs := bytes.NewReader(pdfBytes)
+	var outBuf bytes.Buffer
+
+	wmMap := make(map[int][]*model.Watermark)
+	wmMap[1] = watermarks
+
+	if err := api.AddWatermarksSliceMap(rs, &outBuf, wmMap, nil); err != nil {
+		return nil, fmt.Errorf("adding watermarks: %w", err)
+	}
+
+	return outBuf.Bytes(), nil
+}
+
+// buildTextWatermarkDesc builds the pdfcpu watermark description string.
+func buildTextWatermarkDesc(fontName string, fontSize int, color string, marginLeft, yFromTop float64, align TextAlign, marginRight float64) string {
+	// Determine position and offset based on alignment
+	var pos string
+	var offsetX float64
+
+	switch align {
+	case TextAlignCenter:
+		pos = "tc"
+		offsetX = 0 // Centered, no horizontal offset
+	case TextAlignRight:
+		pos = "tr"
+		offsetX = -marginRight // Offset from right edge
+	default: // TextAlignLeft or empty
+		pos = "tl"
+		offsetX = marginLeft
+	}
+
+	return fmt.Sprintf(
+		"font:%s, points:%d, fillcolor:%s, pos:%s, offset:%.1f -%.1f, scale:1 abs, opacity:1",
+		fontName,
+		fontSize,
+		color,
+		pos,
+		offsetX,
+		yFromTop,
+	)
 }
 
 // addLogoOverlay adds a logo image onto the PDF at the specified position.
@@ -400,6 +533,153 @@ func addLogoOverlay(pdfBytes []byte, logoReader io.Reader, opts LogoOptions) ([]
 
 	if err := api.AddWatermarks(rs, &outBuf, nil, wm, nil); err != nil {
 		return nil, fmt.Errorf("adding logo watermark: %w", err)
+	}
+
+	return outBuf.Bytes(), nil
+}
+
+// CreateMultiPagePDF creates a PDF with multiple pages, each with its own background, logo, and text.
+func CreateMultiPagePDF(pages []Page, pageSize PageSize) ([]byte, error) {
+	if len(pages) == 0 {
+		return nil, fmt.Errorf("no pages provided")
+	}
+
+	// Generate each page as a separate PDF
+	var pagePDFs [][]byte
+	for i, page := range pages {
+		pageBytes, err := createSinglePage(page, pageSize)
+		if err != nil {
+			return nil, fmt.Errorf("creating page %d: %w", i+1, err)
+		}
+		pagePDFs = append(pagePDFs, pageBytes)
+	}
+
+	// If only one page, return it directly
+	if len(pagePDFs) == 1 {
+		return pagePDFs[0], nil
+	}
+
+	// Merge all pages into a single PDF
+	return mergePDFs(pagePDFs)
+}
+
+// CreateMultiPagePDFFile creates a multi-page PDF and writes it to outPath.
+func CreateMultiPagePDFFile(pages []Page, pageSize PageSize, outPath string) error {
+	// Open any file-based resources
+	for i := range pages {
+		if pages[i].BackgroundPath != "" && pages[i].BackgroundReader == nil {
+			f, err := os.Open(pages[i].BackgroundPath)
+			if err != nil {
+				return fmt.Errorf("opening background file for page %d: %w", i+1, err)
+			}
+			defer f.Close()
+			pages[i].BackgroundReader = f
+		}
+		if pages[i].LogoPath != "" && pages[i].Logo != nil && pages[i].LogoReader == nil {
+			f, err := os.Open(pages[i].LogoPath)
+			if err != nil {
+				return fmt.Errorf("opening logo file for page %d: %w", i+1, err)
+			}
+			defer f.Close()
+			pages[i].LogoReader = f
+		}
+	}
+
+	pdfBytes, err := CreateMultiPagePDF(pages, pageSize)
+	if err != nil {
+		return err
+	}
+
+	if err := os.WriteFile(outPath, pdfBytes, 0600); err != nil {
+		return fmt.Errorf("writing output file: %w", err)
+	}
+
+	return nil
+}
+
+// createSinglePage creates a single page PDF.
+func createSinglePage(page Page, pageSize PageSize) ([]byte, error) {
+	var pdfBytes []byte
+	var err error
+
+	// Create base page (with or without background)
+	if page.BackgroundReader != nil {
+		img, err := prepareBackgroundImage(page.BackgroundReader, pageSize)
+		if err != nil {
+			return nil, fmt.Errorf("preparing background image: %w", err)
+		}
+		pdfBytes, err = createImagePDF(img, pageSize)
+		if err != nil {
+			return nil, fmt.Errorf("creating image PDF: %w", err)
+		}
+	} else {
+		// Create blank white page
+		pdfBytes, err = createBlankPDF(pageSize)
+		if err != nil {
+			return nil, fmt.Errorf("creating blank PDF: %w", err)
+		}
+	}
+
+	// Add logo if provided
+	if page.Logo != nil && page.LogoReader != nil {
+		pdfBytes, err = addLogoOverlay(pdfBytes, page.LogoReader, *page.Logo)
+		if err != nil {
+			return nil, fmt.Errorf("adding logo overlay: %w", err)
+		}
+	}
+
+	// Add text (TextBlocks take precedence over markdown)
+	if len(page.TextBlocks) > 0 {
+		pdfBytes, err = addTextBlocksOverlay(pdfBytes, page.TextBlocks, page.TextStyle)
+		if err != nil {
+			return nil, fmt.Errorf("adding text blocks overlay: %w", err)
+		}
+	} else if strings.TrimSpace(page.MarkdownText) != "" {
+		pdfBytes, err = addTextOverlay(pdfBytes, page.MarkdownText, page.TextStyle)
+		if err != nil {
+			return nil, fmt.Errorf("adding text overlay: %w", err)
+		}
+	}
+
+	return pdfBytes, nil
+}
+
+// createBlankPDF creates a single blank white page PDF.
+func createBlankPDF(pageSize PageSize) ([]byte, error) {
+	// Create a white image the size of the page
+	width := int(pageSize.Width)
+	height := int(pageSize.Height)
+	whiteImg := image.NewRGBA(image.Rect(0, 0, width, height))
+
+	// Fill with white
+	white := color.RGBA{R: 255, G: 255, B: 255, A: 255}
+	for y := 0; y < height; y++ {
+		for x := 0; x < width; x++ {
+			whiteImg.Set(x, y, white)
+		}
+	}
+
+	return createImagePDF(whiteImg, pageSize)
+}
+
+// mergePDFs merges multiple PDF byte slices into a single PDF.
+func mergePDFs(pdfs [][]byte) ([]byte, error) {
+	if len(pdfs) == 0 {
+		return nil, fmt.Errorf("no PDFs to merge")
+	}
+	if len(pdfs) == 1 {
+		return pdfs[0], nil
+	}
+
+	// Create readers for all PDFs
+	readers := make([]io.ReadSeeker, len(pdfs))
+	for i, pdf := range pdfs {
+		readers[i] = bytes.NewReader(pdf)
+	}
+
+	var outBuf bytes.Buffer
+	if err := api.MergeRaw(readers, &outBuf, false, nil); err != nil {
+		return nil, fmt.Errorf("merging PDFs: %w", err)
 	}
 
 	return outBuf.Bytes(), nil
