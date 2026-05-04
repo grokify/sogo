@@ -14,6 +14,7 @@ import (
 	"github.com/grokify/mogo/image/imageutil"
 	"github.com/pdfcpu/pdfcpu/pkg/api"
 	"github.com/pdfcpu/pdfcpu/pkg/pdfcpu"
+	pdfcolor "github.com/pdfcpu/pdfcpu/pkg/pdfcpu/color"
 	"github.com/pdfcpu/pdfcpu/pkg/pdfcpu/model"
 	"github.com/pdfcpu/pdfcpu/pkg/pdfcpu/types"
 )
@@ -271,6 +272,62 @@ func prepareBackgroundImage(r io.Reader, pageSize PageSize) (image.Image, error)
 	return scaled, nil
 }
 
+// averageEdgeColor samples pixels along the edges of an image and returns
+// the average color. This is used to set a background color that matches
+// the image edges, eliminating any visible gaps from sub-pixel rendering.
+func averageEdgeColor(img image.Image) pdfcolor.SimpleColor {
+	bounds := img.Bounds()
+	var r, g, b uint64
+	var count uint64
+
+	// Sample all four edges
+	for x := bounds.Min.X; x < bounds.Max.X; x++ {
+		// Top edge
+		c := img.At(x, bounds.Min.Y)
+		cr, cg, cb, _ := c.RGBA()
+		r += uint64(cr)
+		g += uint64(cg)
+		b += uint64(cb)
+		count++
+
+		// Bottom edge
+		c = img.At(x, bounds.Max.Y-1)
+		cr, cg, cb, _ = c.RGBA()
+		r += uint64(cr)
+		g += uint64(cg)
+		b += uint64(cb)
+		count++
+	}
+	for y := bounds.Min.Y + 1; y < bounds.Max.Y-1; y++ {
+		// Left edge
+		c := img.At(bounds.Min.X, y)
+		cr, cg, cb, _ := c.RGBA()
+		r += uint64(cr)
+		g += uint64(cg)
+		b += uint64(cb)
+		count++
+
+		// Right edge
+		c = img.At(bounds.Max.X-1, y)
+		cr, cg, cb, _ = c.RGBA()
+		r += uint64(cr)
+		g += uint64(cg)
+		b += uint64(cb)
+		count++
+	}
+
+	if count == 0 {
+		return pdfcolor.SimpleColor{R: 0, G: 0, B: 0}
+	}
+
+	// RGBA values are 16-bit (0-65535), convert to 0-1 range
+	return pdfcolor.SimpleColor{
+		R: float32(r/count) / 65535.0,
+		G: float32(g/count) / 65535.0,
+		B: float32(b/count) / 65535.0,
+	}
+}
+
 // createImagePDF creates a single-page PDF with the image filling the page.
 func createImagePDF(img image.Image, pageSize PageSize) ([]byte, error) {
 	// Write image to a temporary file (pdfcpu needs a reader for ImportImages)
@@ -287,6 +344,9 @@ func createImagePDF(img image.Image, pageSize PageSize) ([]byte, error) {
 	}
 	tmpFile.Close()
 
+	// Sample edge color to fill any sub-pixel gaps between image and page
+	bgColor := averageEdgeColor(img)
+
 	// Configure import to place image at full page size
 	imp := &pdfcpu.Import{
 		PageDim:  &types.Dim{Width: pageSize.Width, Height: pageSize.Height},
@@ -295,6 +355,7 @@ func createImagePDF(img image.Image, pageSize PageSize) ([]byte, error) {
 		Pos:      types.Full,
 		Scale:    1.0,
 		InpUnit:  types.POINTS,
+		BgColor:  &bgColor,
 	}
 
 	// Create PDF with the image
