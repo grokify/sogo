@@ -32,7 +32,7 @@ require (
 	github.com/valyala/quicktemplate v1.8.0
 	github.com/yuin/goldmark v1.8.2
 	github.com/zhuyie/golzf v0.0.0-20161112031142-8387b0307ade
-	golang.org/x/crypto v0.50.0
+	golang.org/x/crypto v0.51.0
 )
 
 require (
@@ -61,7 +61,7 @@ require (
 	golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f // indirect
 	golang.org/x/image v0.39.0 // indirect
 	golang.org/x/net v0.53.0 // indirect
-	golang.org/x/sys v0.43.0 // indirect
-	golang.org/x/text v0.36.0 // indirect
+	golang.org/x/sys v0.44.0 // indirect
+	golang.org/x/text v0.37.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
