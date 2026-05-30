@@ -20,7 +20,7 @@ require (
 	github.com/jessevdk/go-flags v1.6.1
 	github.com/leekchan/accounting v1.0.0
 	github.com/oleiade/reflections v1.1.0
-	github.com/pdfcpu/pdfcpu v0.12.0
+	github.com/pdfcpu/pdfcpu v0.12.1
 	github.com/phpdave11/gofpdf v1.4.3
 	github.com/pkg/sftp v1.13.10
 	github.com/shopspring/decimal v1.4.0
