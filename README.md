@@ -58,8 +58,9 @@ go get github.com/grokify/sogo
 | **PDF** | `pdf` | PDF generation with background images, text overlay, multi-page support |
 | **Reflect** | `reflect/reflectutil` | Reflection utilities |
 | **Text** | `text/currencyutil` | Currency formatting |
-| | `text/markdown/md2html` | Markdown to HTML conversion |
+| | `text/markdown/md2html` | Markdown to HTML with themes, frontmatter, TOC and syntax highlighting |
 | | `text/markdown/md2pdf` | Markdown to PDF conversion |
+| | `pdf/mkdn2pdf` | Markdown to PDF using maroto |
 | | `text/markdown/remark` | Remark.js presentation utilities |
 | | `text/mustacheutil` | Mustache template utilities |
 | **Time** | `time/timezone` | Timezone abbreviation mapping |
