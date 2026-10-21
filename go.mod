@@ -27,12 +27,12 @@ require (
 	github.com/spf13/cobra v1.10.2
 	github.com/spf13/pflag v1.0.10
 	github.com/tkuchiki/go-timezone v0.2.3
-	github.com/valyala/fasthttp v1.71.0
+	github.com/valyala/fasthttp v1.72.0
 	github.com/valyala/fastjson v1.6.10
 	github.com/valyala/quicktemplate v1.8.0
 	github.com/yuin/goldmark v1.8.2
 	github.com/zhuyie/golzf v0.0.0-20161112031142-8387b0307ade
-	golang.org/x/crypto v0.52.0
+	golang.org/x/crypto v0.53.0
 )
 
 require (
