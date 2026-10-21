@@ -7,6 +7,30 @@
   "maintainers": ["grokify", "johncwang@gmail.com"],
   "releases": [
     {
+      "version": "v0.16.0",
+      "date": "2026-10-20",
+      "highlights": [
+        { "description": "`md2html` gains themes, YAML frontmatter, table of contents and syntax highlighting, and a new `pdf/mkdn2pdf` package converts Markdown to PDF" },
+        { "description": "`md2html` CLI is reworked with cobra flags and a new default output filename (breaking)" }
+      ],
+      "added": [
+        { "description": "`md2html`: add `Render()`, `RenderFile()`, `RenderToFile()` and `RenderFileToFile()` with `Options` for theming, wrapper, TOC and highlighting", "commit": "9571da1" },
+        { "description": "`md2html`: add YAML frontmatter parsing with `ParseFrontmatter()` and `HasFrontmatter()`", "commit": "9571da1" },
+        { "description": "`md2html`: add CSS token themes (`default`, `dark`, `minimal`, `forest`) and a full HTML document wrapper", "commit": "9571da1" },
+        { "description": "`md2html`: add table of contents generation with `GenerateTOC()` using goldmark heading IDs", "commit": "9571da1" },
+        { "description": "`md2html`: add chroma syntax highlighting with `GetHighlightStyles()` and `GetHighlightCSS()`", "commit": "9571da1" },
+        { "description": "`mkdn2pdf`: add Markdown to PDF conversion using maroto with `MarkdownToPDF()`, `TableToPDF()` and `Writer`", "commit": "90067ec" }
+      ],
+      "changed": [
+        { "description": "`md2html` CLI: **BREAKING** rework with cobra flags (`--theme`, `--toc`, `--highlight`, `--wrapper`); output defaults to the input name with `.md` replaced by `.html` and a conversion summary is printed instead of `DONE`", "commit": "cb1ade1" },
+        { "description": "`deps`: update dependencies; `pdfcpu` is held below v0.16 because `maroto/v2` is incompatible with its context-based API", "commit": "732a3b9" }
+      ],
+      "tests": [
+        { "description": "`md2html`: add render, TOC, frontmatter and escaping tests", "commit": "0ffe94b" },
+        { "description": "`mkdn2pdf`: add conversion and option default tests", "commit": "789a2ef" }
+      ]
+    },
+    {
       "version": "v0.15.0",
       "date": "2026-05-03",
       "highlights": [
