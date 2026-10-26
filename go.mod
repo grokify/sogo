@@ -19,7 +19,7 @@ require (
 	github.com/gorilla/mux v1.8.1
 	github.com/grokify/mogo v0.75.0
 	github.com/jessevdk/go-flags v1.6.1
-	github.com/johnfercher/maroto/v2 v2.4.3
+	github.com/johnfercher/maroto/v2 v2.4.4
 	github.com/leekchan/accounting v1.0.0
 	github.com/oleiade/reflections v1.1.0
 	github.com/pdfcpu/pdfcpu v0.15.0
