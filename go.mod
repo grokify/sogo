@@ -24,7 +24,7 @@ require (
 	github.com/oleiade/reflections v1.1.0
 	github.com/pdfcpu/pdfcpu v0.15.0
 	github.com/phpdave11/gofpdf v1.4.3
-	github.com/pkg/sftp v1.13.11
+	github.com/pkg/sftp v1.13.12
 	github.com/shopspring/decimal v1.6.0
 	github.com/spf13/cobra v1.10.2
 	github.com/spf13/pflag v1.0.10
