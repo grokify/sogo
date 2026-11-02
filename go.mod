@@ -22,7 +22,7 @@ require (
 	github.com/johnfercher/maroto/v2 v2.4.3
 	github.com/leekchan/accounting v1.0.0
 	github.com/oleiade/reflections v1.1.0
-	github.com/pdfcpu/pdfcpu v0.15.0
+	github.com/pdfcpu/pdfcpu v0.16.4
 	github.com/phpdave11/gofpdf v1.4.3
 	github.com/pkg/sftp v1.13.11
 	github.com/shopspring/decimal v1.6.0
@@ -64,6 +64,7 @@ require (
 	github.com/molecule-man/go-brrr v1.3.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
+	github.com/xdg-go/stringprep v1.0.4 // indirect
 	go.yaml.in/yaml/v3 v3.0.5 // indirect
 	golang.org/x/exp v0.0.0-20261014143641-f0251eb4aa3e // indirect
 	golang.org/x/image v0.47.0 // indirect
